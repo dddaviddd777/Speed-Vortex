@@ -1,0 +1,1639 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1226">
+<title>Speed Vortex</title>
+<style>
+:root{--bg:#0f1226;--ink:#f4f1ff;--dim:#a9a4d0;--acc:#ff9b6b;color-scheme:dark;--st:env(safe-area-inset-top,0px);--sr:env(safe-area-inset-right,0px);--sb:env(safe-area-inset-bottom,0px);--sl:env(safe-area-inset-left,0px)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:ui-rounded,"Avenir Next",system-ui,sans-serif;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+#hud{position:fixed;left:0;right:0;top:0;padding:calc(14px + var(--st)) 18px 0 calc(18px + var(--sl));display:flex;justify-content:space-between;font-size:18px;font-variant-numeric:tabular-nums;pointer-events:none;color:var(--ink)}
+#hud span:last-child{color:var(--dim)}
+#toast{position:fixed;left:0;right:0;top:22%;text-align:center;font-size:clamp(20px,5vw,30px);font-weight:800;letter-spacing:.02em;color:var(--ink);text-shadow:0 2px 18px rgba(0,0,0,.65);pointer-events:none;opacity:0;z-index:4}
+#toast.on{animation:tt 2.4s ease-out forwards}
+@keyframes tt{0%{opacity:0;transform:translateY(10px)}12%{opacity:1;transform:none}72%{opacity:1}100%{opacity:0}}
+@keyframes tf{0%{opacity:0}12%{opacity:1}72%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){#toast.on{animation-name:tf}}
+#ov{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:calc(24px + var(--st)) calc(24px + var(--sr)) calc(24px + var(--sb)) calc(24px + var(--sl));background:rgba(15,18,38,.5);cursor:pointer}
+#ov h1{margin:0;font-size:clamp(38px,10.5vw,80px);font-weight:800;letter-spacing:-.02em;line-height:1}
+#ov p{margin:0;max-width:32ch;color:var(--dim);font-size:17px;line-height:1.45}
+#ov .big{color:var(--ink);font-size:28px;font-variant-numeric:tabular-nums}
+.ib{position:fixed;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(15,18,38,.55);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;z-index:6;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.ib svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ib:hover{background:rgba(255,255,255,.14)}
+.ib:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+#home{left:calc(14px + var(--sl));bottom:calc(14px + var(--sb));display:none}
+#gear{right:calc(14px + var(--sr));top:calc(12px + var(--st))}
+#pause{right:calc(14px + var(--sr));top:calc(12px + var(--st));display:none}
+#set{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;padding:calc(16px + var(--st)) calc(16px + var(--sr)) calc(16px + var(--sb)) calc(16px + var(--sl));background:rgba(8,9,22,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:default}
+#set .pn{width:min(440px,100%);max-height:100%;overflow:auto;padding:22px 22px 18px;border-radius:22px;background:#171a36;border:1px solid rgba(255,255,255,.12);touch-action:pan-y}
+#set h2{margin:0 0 4px;font-size:26px;font-weight:800;letter-spacing:-.01em}
+#set .sub{margin:0 0 18px;color:var(--dim);font-size:14px}
+.sec{margin-top:20px}
+.sec>h3{margin:0 0 10px;font-size:15px;font-weight:700;color:var(--ink)}
+.row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.row .lb{flex:0 0 108px;font-size:14px;color:var(--dim);line-height:1.2}
+.row .val{flex:0 0 46px;text-align:right;font-size:14px;font-variant-numeric:tabular-nums}
+.sl{flex:1;appearance:none;-webkit-appearance:none;height:28px;background:transparent;cursor:pointer;margin:0;touch-action:pan-y}
+.sl::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:linear-gradient(90deg,var(--acc) var(--p,50%),rgba(255,255,255,.14) var(--p,50%))}
+.sl::-moz-range-track{height:6px;border-radius:99px;background:rgba(255,255,255,.14)}
+.sl::-moz-range-progress{height:6px;border-radius:99px;background:var(--acc)}
+.sl::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--ink);border:0;margin-top:-8px;box-shadow:0 0 0 4px rgba(255,155,107,.25)}
+.sl::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--ink);border:0;box-shadow:0 0 0 4px rgba(255,155,107,.25)}
+.sl:focus-visible{outline:3px solid var(--acc);outline-offset:2px;border-radius:8px}
+.peril{margin:4px 0 0;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)}
+.peril .top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px}
+.peril .top b{font-weight:700}
+.bar{height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+.bar i{display:block;height:100%;width:50%;border-radius:99px;background:linear-gradient(90deg,#6be3ff,#ffe36b,#ff5f7a);background-size:var(--bw,100%) 100%;transition:width .15s}
+.pr{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;padding:4px;border-radius:20px;background:rgba(255,255,255,.07)}
+.pr button{flex:1 1 auto;padding:8px 10px;border:0;border-radius:999px;background:transparent;color:var(--dim);font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+.pr button[aria-checked="true"]{background:var(--ink);color:#1b1230}
+.pr button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.sw{display:flex;flex-wrap:wrap;gap:10px;flex:1}
+.sw button{width:30px;height:30px;border-radius:50%;border:2px solid transparent;padding:0;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+.sw button[aria-checked="true"]{border-color:var(--ink);box-shadow:0 0 0 2px #171a36,0 0 0 4px var(--acc)}
+.sw button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+.sw .auto{width:auto;padding:0 12px;border-radius:999px;background:transparent;color:var(--dim);font:inherit;font-size:13px;font-weight:600}
+.sw .auto[aria-checked="true"]{color:var(--ink)}
+.acts{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
+.acts button{padding:11px 20px;border:0;border-radius:999px;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+.acts .ghost{background:rgba(255,255,255,.08);color:var(--ink)}
+.acts .ok{background:var(--acc);color:#1b1230}
+.acts button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+#diff{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:6px;padding:5px;border-radius:24px;background:rgba(255,255,255,.07)}
+#diff button{padding:9px 14px;border:0;border-radius:999px;background:transparent;color:var(--dim);font:inherit;font-weight:600;font-size:16px;cursor:pointer}
+#diff button[aria-checked="true"]{background:var(--ink);color:#1b1230}
+#diff button.mad,.pr button.mad{color:#ff6b7f;letter-spacing:.04em}
+#diff button.mad[aria-checked="true"],.pr button.mad[aria-checked="true"]{background:#ff3d5a;color:#fff}
+#diff button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+#mute{right:calc(14px + var(--sr));bottom:calc(14px + var(--sb));font-size:20px;z-index:9}
+#hud{padding-right:calc(70px + var(--sr))}
+#go{margin-top:8px;padding:12px 28px;border:0;border-radius:999px;background:var(--acc);color:#1b1230;font:inherit;font-weight:700;font-size:18px;cursor:pointer}
+#go:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+/* pausa i compte enrere */
+#pz,#tut{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;gap:14px;padding:calc(24px + var(--st)) calc(24px + var(--sr)) calc(24px + var(--sb)) calc(24px + var(--sl));background:rgba(8,9,22,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:8}
+#pz h2{margin:0;font-size:clamp(32px,9vw,54px);font-weight:800;letter-spacing:-.01em}
+#pz .pd{font-size:20px;color:var(--dim);font-variant-numeric:tabular-nums;margin-bottom:8px}
+.pbtn{padding:13px 28px;border:0;border-radius:999px;font:inherit;font-weight:700;font-size:18px;cursor:pointer;min-width:220px}
+.pbtn.main{background:var(--acc);color:#1b1230}
+.pbtn.alt{background:rgba(255,255,255,.1);color:var(--ink)}
+.pbtn:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+#count{position:fixed;left:0;right:0;top:32%;text-align:center;font-size:clamp(72px,24vw,150px);font-weight:800;color:var(--ink);text-shadow:0 4px 30px rgba(0,0,0,.6);pointer-events:none;z-index:7;display:none;font-variant-numeric:tabular-nums}
+#count.pop{animation:cp .7s ease-out}
+@keyframes cp{0%{transform:scale(1.5);opacity:0}30%{opacity:1}100%{transform:scale(1);opacity:.9}}
+/* tutorial de la primera partida */
+#tut{z-index:9}
+#tut .tc{width:min(360px,100%);max-height:100%;overflow:auto;padding:20px 20px 16px;border-radius:22px;background:#171a36;border:1px solid rgba(255,255,255,.12)}
+#tut h2{margin:0 0 2px;font-size:24px;font-weight:800}
+#tut p{margin:6px 0;color:var(--dim);font-size:15px;line-height:1.4}
+#tut b{color:var(--ink)}
+#tut svg{width:100%;height:auto;display:block;margin:8px 0 4px}
+#tut .tb{height:5px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin:12px 0 10px}
+#tut .tb i{display:block;height:100%;width:100%;background:var(--acc);transform-origin:left;transform:scaleX(0)}
+#tut.go .tb i{animation:tb 5s linear forwards}
+@keyframes tb{to{transform:scaleX(1)}}
+#tut .tk{padding:9px 22px;border:0;border-radius:999px;background:rgba(255,255,255,.1);color:var(--ink);font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+#tut .tk:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+.t-wall{fill:#ff7a45}
+.t-ship,.t-f1{animation:tship 2.6s ease-in-out infinite}
+@keyframes tship{0%,15%{transform:translateX(-62px)}55%,100%{transform:translateX(34px)}}
+.t-hold circle{transform-box:fill-box;transform-origin:center;animation:tpulse 1s ease-in-out infinite}
+@keyframes tpulse{50%{transform:scale(1.5)}}
+#tut.hold .t-drag,#tut.drag .t-hold{display:none}
+@media (prefers-reduced-motion:reduce){.t-ship,.t-f1,.t-hold circle,#count.pop{animation:none}}
+/* ajustos de controls, vibració i efectes */
+.tg{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;font-size:14px;color:var(--dim);line-height:1.25}
+.tg small{opacity:.75}
+.sw2{position:relative;width:46px;height:28px;border-radius:99px;border:0;background:rgba(255,255,255,.16);cursor:pointer;padding:0;flex:none;transition:background .15s}
+.sw2::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--ink);transition:transform .15s}
+.sw2[aria-checked="true"]{background:var(--acc)}
+.sw2[aria-checked="true"]::after{transform:translateX(18px)}
+.sw2:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.seg{display:flex;gap:6px;margin-bottom:12px;padding:4px;border-radius:999px;background:rgba(255,255,255,.07)}
+.seg button{flex:1;padding:8px 6px;border:0;border-radius:999px;background:transparent;color:var(--dim);font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+.seg button[aria-checked="true"]{background:var(--ink);color:#1b1230}
+.seg button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.row.off{opacity:.4}
+.linkb{background:none;border:0;color:var(--acc);font:inherit;font-size:14px;font-weight:600;padding:6px 0;cursor:pointer;text-decoration:underline}
+/* barra del powerup actiu */
+#pw{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + var(--sb));width:min(240px,calc(100vw - 150px));display:none;flex-direction:column;gap:6px;padding:9px 14px 10px;border-radius:16px;background:rgba(15,18,38,.62);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);pointer-events:none;z-index:5;font-size:13px;font-weight:700;letter-spacing:.03em;text-align:center}
+#pw .bar2{height:5px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden}
+#pw .bar2 i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#6be3ff,#ff5f9e);transform-origin:left;transform:scaleX(1)}
+/* ---- v17: animacions i acabats ---- */
+:root{--ease:cubic-bezier(.2,.8,.2,1);--glass:linear-gradient(160deg,rgba(34,38,84,.94),rgba(18,20,46,.96))}
+button{-webkit-tap-highlight-color:transparent}
+button,.ib,.sw2,.sw2::after{transition:transform .14s var(--ease),background .2s,color .2s,filter .2s,box-shadow .2s,opacity .2s}
+button:active:not(:disabled){transform:scale(.94);filter:brightness(1.12)}
+.sw2:active{transform:scale(.92)}
+.ib:hover{transform:scale(1.06)}
+.ib:active{transform:scale(.9)}
+#gear svg,#pause svg,#home svg{transition:transform .35s var(--ease)}
+#gear:active svg{transform:rotate(70deg)}
+#gear:hover svg{transform:rotate(25deg)}
+#ov{background:radial-gradient(ellipse at 50% 42%,rgba(15,18,38,.28),rgba(6,7,18,.82) 78%)}
+#ov h1{background:linear-gradient(180deg,#fff 25%,#ffc9ae 70%,var(--acc));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 6px 28px rgba(255,155,107,.35))}
+#ov .big{font-size:34px;font-weight:800;color:var(--ink);text-shadow:0 0 26px rgba(255,155,107,.45)}
+#go{background:linear-gradient(135deg,#ffb48a,#ff8456);box-shadow:0 8px 26px rgba(255,132,86,.38),inset 0 1px 0 rgba(255,255,255,.45);letter-spacing:.01em}
+#go:hover{filter:brightness(1.08)}
+#ov.menu #go{animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{50%{box-shadow:0 8px 38px rgba(255,132,86,.62),inset 0 1px 0 rgba(255,255,255,.45)}}
+#ov.on>*{animation:rise .55s var(--ease) both}
+#ov.on>*:nth-child(1){animation-delay:.02s}#ov.on>*:nth-child(2){animation-delay:.08s}#ov.on>*:nth-child(3){animation-delay:.14s}
+#ov.on>*:nth-child(4){animation-delay:.2s}#ov.on>*:nth-child(5){animation-delay:.26s}
+#ov.on{animation:fadein .3s ease both}
+#ov.dead.on{animation:fadein .45s ease .45s both}
+#ov.dead.on>*{animation:rise .6s var(--ease) both}
+#ov.dead.on>*:nth-child(1){animation-delay:.5s}#ov.dead.on>*:nth-child(2){animation-delay:.58s}#ov.dead.on>*:nth-child(3){animation-delay:.66s}
+#ov.dead.on>*:nth-child(4){animation-delay:.74s}#ov.dead.on>*:nth-child(5){animation-delay:.82s}#ov.dead.on>*:nth-child(6){animation-delay:.9s}
+#ov:not(.dead) #menu2{display:none}
+#menu2{min-width:0;padding:11px 24px;font-size:16px}
+#ov.dead .big{animation:score .8s var(--ease) .58s both}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes score{0%{opacity:0;transform:scale(.6)}60%{transform:scale(1.12)}100%{opacity:1;transform:none}}
+#set.on{animation:fadein .22s ease both}
+#set.on .pn{animation:panel .38s var(--ease) both}
+#pz.on,#tut.on{animation:fadein .22s ease both}
+#pz.on>*{animation:rise .45s var(--ease) both}
+#pz.on>*:nth-child(1){animation-delay:.03s}#pz.on>*:nth-child(2){animation-delay:.08s}#pz.on>*:nth-child(3){animation-delay:.13s}#pz.on>*:nth-child(4){animation-delay:.18s}
+#tut.on .tc{animation:panel .4s var(--ease) both}
+@keyframes panel{from{opacity:0;transform:translateY(26px) scale(.94)}to{opacity:1;transform:none}}
+#set .pn,#tut .tc{background:var(--glass);box-shadow:0 24px 70px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04) inset,0 0 60px rgba(255,155,107,.08)}
+.pr button,#diff button,.seg button{transition:background .22s,color .22s,transform .14s var(--ease)}
+.pr button[aria-checked="true"],#diff button[aria-checked="true"],.seg button[aria-checked="true"]{animation:pop .3s var(--ease);box-shadow:0 2px 10px rgba(0,0,0,.25)}
+@keyframes pop{0%{transform:scale(.88)}60%{transform:scale(1.07)}100%{transform:none}}
+.sw button[aria-checked="true"]{animation:pop .3s var(--ease)}
+.sw button{transition:transform .14s var(--ease),box-shadow .2s}
+.sw button:hover{transform:scale(1.12)}
+.pbtn.main{background:linear-gradient(135deg,#ffb48a,#ff8456);box-shadow:0 8px 26px rgba(255,132,86,.34),inset 0 1px 0 rgba(255,255,255,.45)}
+.pbtn.alt{border:1px solid rgba(255,255,255,.14)}
+#hud{align-items:flex-start;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+#sc{font-size:28px;font-weight:800;letter-spacing:-.01em}
+#hud span:last-child{font-size:13px;font-weight:600;padding:5px 11px;border-radius:99px;background:rgba(15,18,38,.38);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);margin-top:3px}
+#hud span:last-child:empty{display:none}
+#hud{transition:opacity .4s}
+body.menu #hud{opacity:0}
+canvas.launch{animation:launch .9s var(--ease)}
+@keyframes launch{0%{transform:scale(1.14);filter:brightness(1.9) saturate(1.3)}100%{transform:none;filter:none}}
+#flash{position:fixed;inset:0;pointer-events:none;z-index:5;opacity:0;background:radial-gradient(ellipse at 50% 55%,rgba(255,255,255,.85),rgba(255,120,120,.55) 55%,rgba(255,60,90,.0))}
+#flash.go{animation:flash .55s ease-out}
+@keyframes flash{0%{opacity:.9}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+ #ov.on,#ov.on>*,#ov.dead.on,#ov.dead.on>*,#ov.dead .big,#set.on,#set.on .pn,#pz.on,#pz.on>*,#tut.on,#tut.on .tc,canvas.launch,#flash.go,#ov.menu #go{animation-duration:.01s;animation-delay:0s;animation-name:fadein}
+ button:active:not(:disabled),.ib:hover,.ib:active,#gear:hover svg,#gear:active svg{transform:none}
+ .pr button[aria-checked="true"],#diff button[aria-checked="true"],.seg button[aria-checked="true"],.sw button[aria-checked="true"]{animation:none}
+}
+/* ---- monedes, hangar ---- */
+#coins{position:fixed;left:calc(18px + var(--sl));top:calc(52px + var(--st));display:flex;align-items:center;gap:8px;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;color:#ffe38a;text-shadow:0 2px 12px rgba(0,0,0,.6);pointer-events:none;transition:opacity .4s}
+#coins i{font-style:normal;font-size:12px;font-weight:800;padding:3px 8px;border-radius:99px;background:linear-gradient(135deg,#ffd76b,#ff9b4a);color:#2a1606;text-shadow:none}
+#coins i:empty{display:none}
+#coins b.pop{animation:cpop .3s var(--ease)}
+@keyframes cpop{40%{transform:scale(1.3)}}
+#coins .sh{font-size:13px;color:#8fe9ff}
+#coins .sh:empty{display:none}
+body.menu #coins{opacity:0}
+#ov .earn{display:block;margin-top:6px;font-size:17px;font-weight:700;color:#ffe38a}
+#ov .earn small{display:block;font-size:13px;font-weight:500;color:var(--dim)}
+#lo{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+#lo:empty{display:none}
+#lo button{font:inherit;font-size:13px;font-weight:600;padding:7px 12px;border-radius:99px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:var(--dim);cursor:pointer}
+#lo button[aria-pressed="true"]{background:rgba(143,233,255,.18);border-color:#8fe9ff;color:#fff}
+#shopb{display:inline-flex;align-items:center;gap:10px;min-width:0;padding:11px 22px;font-size:16px}
+#shopb .w{color:#ffe38a;font-variant-numeric:tabular-nums}
+#ov:not(.menu):not(.dead) #lo,#ov:not(.menu):not(.dead) #shopb{display:none}
+#shop{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;padding:calc(16px + var(--st)) calc(16px + var(--sr)) calc(16px + var(--sb)) calc(16px + var(--sl));background:rgba(8,9,22,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#shop .pn{width:min(520px,100%);max-height:100%;overflow:auto;padding:20px 18px 16px;border-radius:22px;background:var(--glass);border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 70px rgba(0,0,0,.55);touch-action:pan-y}
+#shop.on{animation:fadein .22s ease both}
+#shop.on .pn{animation:panel .38s var(--ease) both}
+#shop .hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+#shop h2{margin:0;font-size:24px}
+#shop .wal{font-size:18px;font-weight:800;color:#ffe38a;font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.card{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 8px 10px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);text-align:center}
+.card.eq{border-color:#8fe9ff;background:rgba(143,233,255,.1)}
+.card canvas{position:static;display:block;inset:auto;width:120px;height:96px;touch-action:auto}
+.card b{font-size:15px}
+.card small{font-size:12px;color:var(--dim);line-height:1.3;min-height:31px}
+.card button{font:inherit;font-size:14px;font-weight:700;padding:7px 14px;border-radius:99px;border:0;cursor:pointer;background:rgba(255,255,255,.12);color:var(--ink);min-width:96px}
+.card button.buy{background:linear-gradient(135deg,#ffd76b,#ff9b4a);color:#2a1606}
+.card button:disabled{opacity:.45;cursor:default}
+.pul .card{flex-direction:row;text-align:left;align-items:center;gap:12px;padding:12px}
+.pul .card .ic{flex:0 0 44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800}
+.pul .card .tx{flex:1;display:flex;flex-direction:column;gap:2px}
+.pul .card small{min-height:0}
+.pul{display:flex;flex-direction:column;gap:10px}
+#shop .acts{display:flex;justify-content:flex-end;margin-top:14px}
+@media (prefers-reduced-motion:reduce){#shop.on,#shop.on .pn,#coins b.pop{animation:none}}
+</style>
+</head>
+<body class="menu">
+<canvas id="c"></canvas>
+<div id="hud"><span id="sc">0 m</span><span id="lv"></span></div>
+<div id="coins" aria-live="off"><b id="cnv">◆ 0</b><i id="cnm"></i><span class="sh" id="cns"></span></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="flash" aria-hidden="true"></div>
+<button id="home" class="ib" aria-label="Torna al menú principal" title="Menú principal">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.2 12 4l8.5 7.2"/><path d="M5.8 9.8V20h4.4v-5.2h3.6V20h4.4V9.8"/></svg>
+</button>
+<button id="gear" class="ib" aria-label="Ajustos" title="Ajustos">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.5-2-3.5-2.3.9a7.5 7.5 0 0 0-2.6-1.5L14 2.5h-4l-.5 2.4a7.5 7.5 0 0 0-2.6 1.5l-2.3-.9-2 3.5 2 1.5a7.6 7.6 0 0 0 0 3l-2 1.5 2 3.5 2.3-.9a7.5 7.5 0 0 0 2.6 1.5l.5 2.4h4l.5-2.4a7.5 7.5 0 0 0 2.6-1.5l2.3.9 2-3.5z"/></svg>
+</button>
+<button id="pause" class="ib" aria-label="Pausa" title="Pausa">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5v11M15 6.5v11" stroke-width="2.6"/></svg>
+</button>
+<div id="ov" class="on menu">
+  <h1 id="t">Speed Vortex</h1>
+  <p id="d">Esquiva els cubs i travessa els murs per l’escletxa. Ajusta la velocitat i els murs a l’engranatge.</p>
+  <p id="k">Fletxes ← → o A D. Al mòbil, mantén premut un costat de la pantalla.</p>
+  <div id="diff" role="radiogroup" aria-label="Dificultat">
+    <button role="radio" data-d="0" aria-checked="false">Fàcil</button>
+    <button role="radio" data-d="1" aria-checked="true">Mitjà</button>
+    <button role="radio" data-d="2" aria-checked="false">Difícil</button>
+    <button role="radio" data-d="3" aria-checked="false" class="mad">Madness</button>
+  </div>
+  <div id="lo" role="group" aria-label="Powerups per a la propera partida"></div>
+  <button id="go">Comença</button>
+  <button id="shopb" class="pbtn alt">Hangar <span class="w" id="shw">◆ 0</span></button>
+  <button id="menu2" class="pbtn alt">Menú principal</button>
+</div>
+<button id="mute" class="ib" aria-label="Silencia la música" title="Música">♪</button>
+<div id="count" aria-hidden="true"></div>
+<div id="pw" role="status" aria-live="off"><span id="pwl"></span><div class="bar2"><i id="pwb"></i></div></div>
+<div id="pz" role="dialog" aria-modal="true" aria-labelledby="pzt">
+  <h2 id="pzt">Pausa</h2>
+  <div class="pd" id="pdist"></div>
+  <button class="pbtn main" id="resume">Continua</button>
+  <button class="pbtn alt" id="pmenu">Menú principal</button>
+</div>
+<div id="tut" class="hold" role="dialog" aria-modal="true" aria-labelledby="tutt">
+  <div class="tc">
+    <h2 id="tutt">Com es juga</h2>
+    <svg viewBox="0 0 220 120" aria-hidden="true">
+      <g class="t-wall">
+        <rect x="2" y="12" width="28" height="22" rx="3"/><rect x="32" y="12" width="28" height="22" rx="3"/>
+        <rect x="62" y="12" width="28" height="22" rx="3"/><rect x="92" y="12" width="28" height="22" rx="3"/>
+        <rect x="172" y="12" width="28" height="22" rx="3"/><rect x="202" y="12" width="18" height="22" rx="3"/>
+      </g>
+      <text x="146" y="27" text-anchor="middle" font-size="9" fill="#a9a4d0">escletxa</text>
+      <g class="t-ship"><polygon points="112,66 99,96 125,96" fill="#ffffff"/></g>
+      <g class="t-hold"><rect x="112" y="102" width="106" height="16" rx="8" fill="#ff9b6b" opacity=".22"/><circle cx="168" cy="110" r="5" fill="#ff9b6b"/></g>
+      <g class="t-drag"><line x1="30" y1="110" x2="190" y2="110" stroke="#a9a4d0" stroke-width="2" stroke-dasharray="3 5"/><circle class="t-f1" cx="112" cy="110" r="7" fill="#ff9b6b"/></g>
+    </svg>
+    <p id="tutl1"></p>
+    <p>Passa per les <b>escletxes</b> dels murs sense tocar cap cub. Teclat: <b>← →</b> o <b>A D</b>.</p>
+    <div class="tb"><i></i></div>
+    <button class="tk" id="tskip">Salta</button>
+  </div>
+</div>
+<div id="set" role="dialog" aria-modal="true" aria-labelledby="sh">
+  <div class="pn">
+    <h2 id="sh">Ajustos</h2>
+    <p class="sub">Ajusta el joc al teu gust. Es desa en aquest navegador.</p>
+
+    <div class="sec" style="margin-top:0">
+      <h3>Dificultat</h3>
+      <div class="pr" id="pr" role="radiogroup" aria-label="Preajustos">
+        <button role="radio" data-p="0" aria-checked="false">Fàcil</button>
+        <button role="radio" data-p="1" aria-checked="true">Mitjà</button>
+        <button role="radio" data-p="2" aria-checked="false">Difícil</button>
+        <button role="radio" data-p="3" aria-checked="false" class="mad">Madness</button>
+        <button role="radio" data-p="4" aria-checked="false">Personalitzat</button>
+      </div>
+      <div class="row"><span class="lb">Velocitat del joc</span><input class="sl" id="spd" type="range" min="1" max="16" step="1" aria-label="Velocitat"><span class="val" id="spdv"></span></div>
+      <div class="row"><span class="lb">Quantitat de murs</span><input class="sl" id="wal" type="range" min="1" max="16" step="1" aria-label="Quantitat de murs"><span class="val" id="walv"></span></div>
+      <div class="peril"><div class="top"><span>Perill total</span><b id="perv"></b></div><div class="bar"><i id="perb"></i></div></div>
+    </div>
+
+    <div class="sec">
+      <h3>Colors</h3>
+      <div class="row"><span class="lb">Fons</span><div class="sw" id="sw-bg" role="radiogroup" aria-label="Color de fons"></div></div>
+      <div class="row"><span class="lb">Nau</span><div class="sw" id="sw-ship" role="radiogroup" aria-label="Color de la nau"></div></div>
+      <div class="row"><span class="lb">Murs</span><div class="sw" id="sw-wall" role="radiogroup" aria-label="Color dels murs"></div></div>
+    </div>
+
+    <div class="sec">
+      <h3>Controls</h3>
+      <div class="seg" id="ctl" role="radiogroup" aria-label="Tipus de control">
+        <button role="radio" data-c="hold" aria-checked="true">Mantenir premut</button>
+        <button role="radio" data-c="drag" aria-checked="false">Arrossegar</button>
+      </div>
+      <div class="row"><span class="lb">Sensibilitat</span><input class="sl" id="lsp" type="range" min="1" max="5" step="1" aria-label="Sensibilitat: velocitat de la nau en prémer els botons"><span class="val" id="lspv"></span></div>
+      <div class="row" id="senrow"><span class="lb">Recorregut en arrossegar</span><input class="sl" id="sens" type="range" min="1" max="5" step="1" aria-label="Sensibilitat de l'arrossegament"><span class="val" id="sensv"></span></div>
+      <div class="tg"><span>Vibració en xocar</span><button class="sw2" id="vib" role="switch" aria-checked="true" aria-label="Vibració"></button></div>
+      <div class="tg"><span>Efectes de moviment<br><small>línies de velocitat i sacsejada</small></span><button class="sw2" id="fx" role="switch" aria-checked="true" aria-label="Efectes de moviment"></button></div>
+      <button class="linkb" id="tutbtn">Veure el tutorial</button>
+    </div>
+
+    <div class="sec">
+      <h3>Túnel i bonificacions</h3>
+      <div class="seg" id="crv" role="radiogroup" aria-label="Corbes del túnel">
+        <button role="radio" data-v="0" aria-checked="false">Recte</button>
+        <button role="radio" data-v="1" aria-checked="true">Corbes suaus</button>
+        <button role="radio" data-v="2" aria-checked="false">Intenses</button>
+      </div>
+      <div class="tg"><span>Powerups<br><small>fantasma i làser que apareixen al mapa</small></span><button class="sw2" id="pup" role="switch" aria-checked="true" aria-label="Powerups"></button></div>
+    </div>
+
+    <div class="acts">
+      <button class="ghost" id="rst">Restableix</button>
+      <button class="ok" id="cls">Fet</button>
+    </div>
+  </div>
+</div>
+<div id="shop" role="dialog" aria-modal="true" aria-labelledby="shh">
+  <div class="pn">
+    <div class="hd"><h2 id="shh">Hangar</h2><span class="wal" id="shc">◆ 0</span></div>
+    <div class="seg" id="shtab" role="tablist">
+      <button role="tab" data-t="ships" aria-checked="true">Naus</button>
+      <button role="tab" data-t="pw" aria-checked="false">Powerups inicials</button>
+    </div>
+    <div id="shl"></div>
+    <div class="acts"><button class="ok" id="shx">Fet</button></div>
+  </div>
+</div>
+<script>
+(()=>{
+const cv=document.getElementById('c'),g=cv.getContext('2d');
+const $=id=>document.getElementById(id);
+function toast(t){const e=$('toast');e.textContent=t;e.classList.remove('on');void e.offsetWidth;e.classList.add('on')}
+const setEl=$('set');
+const CAM_H=2.2,D=5,FAR=220,FADE=100,C=96,RC=C/(2*Math.PI),KC=C/160;   // KC: escala dels paràmetres que depenien de la circumferència antiga (160)
+let W,H,f,hor;
+function size(){const r=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*r;cv.height=H*r;g.setTransform(r,0,0,r,0,0);f=Math.max(W*.55,H*.7);hor=H*.36}
+addEventListener('resize',size);size();
+
+let bests={};
+try{bests=JSON.parse(localStorage.getItem('escletxa-bests6'))||{}}catch(e){}
+let best=0;
+// Velocitat (1..10) i murs (1..10) → paràmetres de joc. Preajustos: fàcil / mitjà / difícil.
+const PRE=[[4,4],[8,7],[11,11],[16,16]];
+const PN=['fàcil','mitjà','difícil','madness','personalitzat'];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const wd=(a,b)=>((a-b)%C+1.5*C)%C-C/2; // distància lateral amb volta (cilindre)
+// Velocitat base segons el lliscador de velocitat (1..16), interpolada entre punts de control.
+const SPD=[[1,19.5],[4,31.2],[8,44.2],[11,55.9],[16,80.6]];   // +30% respecte a la versió anterior
+function spdOf(sp){
+  for(let i=1;i<SPD.length;i++){
+    if(sp<=SPD[i][0]){const[a,b]=SPD[i-1],[c,d]=SPD[i];return b+(d-b)*(sp-a)/(c-a)}
+  }
+  return SPD[SPD.length-1][1];
+}
+function derive(sp,wl){
+  const k=(sp-1)/9,w=(wl-1)/9,wc=Math.min(w,1.35);
+  const base=spdOf(sp),mad=sp>=16&&wl>=16;                            // 16/16 = mode Madness
+  return{
+    base,max:base*(1.6+Math.min(k,1.2)*.45),
+    dens:.85+wc,wallP:Math.min(1,.4+w*.5),shift:6+Math.min(w,1.3)*4,win:2.7-w,wv:w,boost:base*.09,v:base*.85,
+    sf:mad?.8:1,          // Madness: files més seguides
+    mr:mad?1.4:1,         // Madness: els anells giren més de pressa
+    mt:mad?300:1000,      // metres a partir dels quals comencen a girar
+    sm:mad?.92:.85,       // Madness: aprofita gairebé tot el marge de moviment lateral
+    sj:mad?.55:.3,        // Madness: els salts entre escletxes són gairebé sempre grans
+    amin:mad?1.4:1.6,     // Madness: escletxes més estretes
+    maxL:w<.5?4:w<1.1?3:2,  // escletxes màximes per anell: 4 a dificultats baixes, 3 a mitjanes, 2 a les més altes
+    mad
+  };
+}
+const DEF_COL={bg:'auto',ship:'#ffffff',wall:'auto'};
+const RM=(typeof matchMedia==='function')&&matchMedia('(prefers-reduced-motion: reduce)').matches;   // si el sistema demana menys moviment, els efectes comencen apagats
+const DEF_X={ctl:'hold',sens:3,spd:1,vib:true,fx:!RM,pup:true,curve:RM?0:1};
+const BG_OPT=[['auto','Auto'],['#0f1226','#0f1226'],['#1a0b2e','#1a0b2e'],['#06201f','#06201f'],['#2a0a14','#2a0a14'],['#05070a','#05070a']];
+const SHIP_OPT=['#ffffff','#6be3ff','#ffe36b','#ff5f9e','#7bff9a','#ff9b6b'];
+const WALL_OPT=[['auto','Auto'],['#ff7a45','#ff7a45'],['#35e0ff','#35e0ff'],['#b46bff','#b46bff'],['#5dff8f','#5dff8f'],['#ff4f7b','#ff4f7b']];
+let cfg={sp:8,wl:7,col:{...DEF_COL},...DEF_X};
+try{const c=JSON.parse(localStorage.getItem('escletxa-cfg3'));if(c&&typeof c==='object'){cfg.sp=clamp(+c.sp||8,1,16);cfg.wl=clamp(+c.wl||7,1,16);cfg.col={...DEF_COL,...(c.col||{})};cfg.ctl=c.ctl==='drag'?'drag':'hold';cfg.sens=clamp(+c.sens||3,1,5);cfg.spd=clamp(Math.round(+c.spd)||1,1,5);cfg.vib=c.vib!==false;cfg.fx=(typeof c.fx==='boolean')?c.fx:!RM;cfg.pup=c.pup!==false;cfg.curve=[0,1,2].includes(c.curve)?c.curve:(RM?0:1)}}catch(e){}
+let D0=derive(cfg.sp,cfg.wl);
+const SPEED_CAP=(()=>{const m=derive(16,16);return(m.base+3*m.boost)*Math.pow(1.05,9)})();   // Madness, Nivell 10 (3 túnels fets, 9 pujades del 5%)
+const capped=()=>(D0.base+stage*D0.boost)*Math.pow(1.05,level())>=SPEED_CAP-1e-9;
+const presetOf=()=>{const i=PRE.findIndex(p=>p[0]===cfg.sp&&p[1]===cfg.wl);return i<0?4:i};
+const keyOf=()=>cfg.sp+'-'+cfg.wl;
+let st='ready',px,vx,camX,dist,scroll=0,speed,obs,nextZ,gapX,deadAt=0,last=0,cc=0,dsg=1,lastSp=30,rows=[],lanes=[],nextTun=3000,tunLeft=0,tunQ=[],stage=0,lastRowZ=0,lastD=2,LH=[],lastLevel=0;
+const keys={};let touch=0;
+let paused=false,cd=0,cdN=0,tutOn=false,tutEnd=0,tutFromSet=false,dragId=null,dragX0=0,dragP0=0,dragTgt=null,parts=[],streaks=[],shk={a:0,t:0,d:1},linesN=0;
+let tutSeen=false;try{tutSeen=localStorage.getItem('riftline-tut')==='1'}catch(e){}
+let blinkAt=0,blinkPer=300,pups=[],pw=null,nextPupD=0,pupLast='',lz=null,pingT=0,rollS=0,rollT=0,vpx=0,vpy=0,dragLastX=0;
+const SPDK=[1,1.2,1.4,1.6,1.8];   // multiplicador de la velocitat lateral del triangle (1 = normal)
+const SENSK=[24,32,40,50,62];   // unitats de món que recorre el triangle per cada amplada de pantalla que arrossegues el dit
+function vib(p){if(cfg.vib&&typeof navigator!=='undefined'&&navigator.vibrate){try{navigator.vibrate(p)}catch(e){}}}
+const shkAmp=()=>{const n=performance.now()-shk.t;return n>=shk.d?0:shk.a*Math.pow(1-n/shk.d,2)};
+function shake(a,d){if(!cfg.fx)return;if(a>=shkAmp())shk={a,t:performance.now(),d}}
+// explosió de partícules al lloc on era el triangle
+function burst(){
+  const c=P(px,.25,D+.3),u=Math.max(.7,Math.min(W,H)/420);
+  const wc=cfg.col.wall==='auto'?'hsl('+((pal().w+150)%360).toFixed(0)+',90%,64%)':cfg.col.wall;
+  const cols=[cfg.col.ship,wc,'#ffffff'],n=cfg.fx?56:28;
+  for(let i=0;i<n;i++){const a=R(0,6.2832),sp=R(80,460)*u;parts.push({x:c[0],y:c[1],vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-120*u,l:R(.5,1.15),m:0,s:R(2,6.5)*u,c:cols[i%3]})}
+}
+
+function applyCfg(){
+  D0=derive(cfg.sp,cfg.wl);best=bests[keyOf()]||0;
+  try{localStorage.setItem('escletxa-cfg3',JSON.stringify(cfg))}catch(e){}
+  document.querySelectorAll('#diff button').forEach(b=>{const i=+b.dataset.d;b.setAttribute('aria-checked',presetOf()===i?'true':'false')});
+}
+function setDiff(i){cfg.sp=PRE[i][0];cfg.wl=PRE[i][1];applyCfg();syncSet()}
+// ---------- Monedes, naus i powerups inicials ----------
+// Naus: polígons en coordenades locals (u = lateral, w = endavant). Totes tenen la mateixa col·lisió que la fletxa original.
+const MIR=p=>p.map(([u,w])=>[-u,w]).reverse();
+const SHIPS=[
+  {id:'fletxa',n:'Fletxa',pr:0,acc:'#ff9b6b',d:'La clàssica. Lleugera i fiable.',P:[[[0,1],[.55,-.4],[0,-.1],[-.55,-.4]],'m']},
+  {id:'falco',n:'Falcó',pr:10,acc:'#6be3ff',d:'Ales en fletxa i cabina blava.',P:[[[0,1.1],[.12,.3],[.6,-.35],[.18,-.2],[0,-.45],[-.18,-.2],[-.6,-.35],[-.12,.3]],'m',[[0,.78],[.07,.38],[0,.26],[-.07,.38]],'a']},
+  {id:'manta',n:'Manta',pr:10,acc:'#b46bff',d:'Ample i arrodonida, amb cua llarga.',P:[[[0,.85],[.35,.55],[.62,.05],[.3,-.15],[0,-.05],[-.3,-.15],[-.62,.05],[-.35,.55]],'m',[[.05,-.04],[0,-.62],[-.05,-.04]],'a',[[.2,.45],[.3,.38],[.22,.33]],'a',MIR([[.2,.45],[.3,.38],[.22,.33]]),'a']},
+  {id:'agulla',n:'Agulla',pr:10,acc:'#7bff9a',d:'Fina com una agulla, amb aletes.',P:[[[.08,.5],[.34,.25],[.1,.3]],'a',MIR([[.08,.5],[.34,.25],[.1,.3]]),'a',[[.1,-.12],[.44,-.45],[.08,-.34]],'a',MIR([[.1,-.12],[.44,-.45],[.08,-.34]]),'a',[[0,1.25],[.1,-.3],[0,-.45],[-.1,-.3]],'m']},
+  {id:'bumerang',n:'Bumerang',pr:10,acc:'#ffe36b',d:'Una V perfecta amb nucli brillant.',P:[[[0,.62],[.62,-.25],[.5,-.42],[0,.18],[-.5,-.42],[-.62,-.25]],'m',[[0,.46],[.13,.26],[0,.32],[-.13,.26]],'a']},
+  {id:'prisma',n:'Prisma',pr:10,acc:'#ff5f9e',d:'Diamant de vidre amb aletes.',P:[[[.38,.2],[.6,-.12],[.28,-.06]],'m',MIR([[.38,.2],[.6,-.12],[.28,-.06]]),'m',[[0,1],[.4,.2],[0,-.5],[-.4,.2]],'m',[[0,.66],[.18,.2],[0,-.2],[-.18,.2]],'a']},
+  {id:'fenix',n:'Fènix',pr:10,acc:'#ff6b3d',d:'Plomes de foc. La més vistosa.',P:[[[.08,.4],[.6,.15],[.5,-.03],[.6,-.2],[.4,-.18],[.46,-.38],[.1,-.1]],'a',MIR([[.08,.4],[.6,.15],[.5,-.03],[.6,-.2],[.4,-.18],[.46,-.38],[.1,-.1]]),'a',[[.05,-.2],[.16,-.58],[0,-.42],[-.16,-.58],[-.05,-.2]],'a',[[0,1.02],[.11,.2],[0,-.32],[-.11,.2]],'m']},
+];
+const PWS=[
+  {id:'shield',n:'Escut',pr:10,c:'#8fe9ff',ic:'◈',d:'Si xoques, en lloc de perdre et tornes fantasma uns segons i continues.'},
+  {id:'ghost',n:'Sortida fantasma',pr:10,c:'#6be3ff',ic:'»',d:'Comences amb 500 m de fantasma: travesses els murs a tota velocitat.'},
+  {id:'laser',n:'Sortida amb làser',pr:10,c:'#ff4f6e',ic:'+',d:'Comences amb 20 s de làser que t\'indica per on passaràs.'},
+];
+const MULT=[[6000,4],[3000,3],[1000,2],[0,1]];                          // multiplicador de monedes segons la distància
+const multAt=d=>MULT.find(m=>d>=m[0])[1];
+let wal={c:0,own:['fletxa'],ship:'fletxa',inv:{shield:0,ghost:0,laser:0},arm:{shield:false,ghost:false,laser:false}};
+try{const w=JSON.parse(localStorage.getItem('sv-wallet'));if(w&&typeof w==='object'){wal.c=Math.max(0,+w.c|0);if(Array.isArray(w.own))wal.own=['fletxa',...w.own.filter(i=>i!=='fletxa'&&SHIPS.some(s=>s.id===i))];if(SHIPS.some(s=>s.id===w.ship)&&wal.own.includes(w.ship))wal.ship=w.ship;for(const k of ['shield','ghost','laser']){wal.inv[k]=Math.max(0,+(w.inv&&w.inv[k])|0);wal.arm[k]=!!(w.arm&&w.arm[k])&&wal.inv[k]>0}}}catch(e){}
+function saveWal(){try{localStorage.setItem('sv-wallet',JSON.stringify(wal))}catch(e){}}
+let lastCoinX=0,coins=[],runC=0,runGot=0,shield=false,credited=true,curMult=1;
+const shipOf=()=>SHIPS.find(s=>s.id===wal.ship)||SHIPS[0];
+function reset(){coins=[];runC=0;runGot=0;curMult=1;px=0;vx=0;camX=0;dist=0;speed=D0.base;obs=[];rows=[];lanes=[];cc=0;dsg=1;lastSp=30;nextZ=45;gapX=0;nextTun=3000;tunLeft=0;tunQ=[];stage=0;lastD=4;lastRowZ=15;LH=[];lastLevel=0;pups=[];pw=null;nextPupD=700+R(0,500);pupLast='';lz=null;hidePw();newCurves();spawn()}
+const R=(a,b)=>a+Math.random()*(b-a);
+for(let i=0;i<60;i++)streaks.push({a:R(0,6.2832),p:Math.random(),v:R(.7,1.3)});   // línies de velocitat (reciclades)
+const level=()=>Math.floor(dist/1000);
+// Cada nivell té la seva paleta aleatòria (to dels murs i del túnel); es barregen durant els primers 800 m del nivell.
+const lerpH=(a,b,t)=>(a+(((b-a+540)%360)-180)*t+360)%360;
+function palOf(i){
+  while(LH.length<=i){
+    if(!LH.length){const w=R(0,360);LH.so=R(150,210);LH.dir=Math.random()<.5?-1:1;LH.push({w,s:(w+LH.so)%360})}
+    else{
+      // canvi subtil: el to es desplaça 24–46° cada nivell, gairebé sempre cap al mateix costat
+      if(Math.random()<.25)LH.dir=-LH.dir;
+      const w=(LH[LH.length-1].w+LH.dir*R(24,46)+360)%360;
+      LH.push({w,s:(w+LH.so)%360});
+    }
+  }
+  return LH[i];
+}
+function pal(){
+  const L=level();
+  if(L===0)return palOf(0);
+  const t0=clamp((dist-L*1000)/800,0,1),t=t0*t0*(3-2*t0);
+  const a=palOf(L-1),b=palOf(L);
+  return{w:lerpH(a.w,b.w,t),s:lerpH(a.s,b.s,t)};
+}
+/* Cada fila té un passadís segur [c-a, c+a] on el triangle no pot xocar amb cap cub.
+   El passadís de la fila següent només es pot allunyar el que el triangle pot recórrer
+   en el temps real que hi ha entre les dues files (amb marge), així que sempre hi ha camí. */
+// Escletxes: la principal (cc) i fins a 2 de secundàries (lanes). Cada una es mou com a molt S entre files,
+// així que des de QUALSEVOL escletxa sempre es pot arribar a una escletxa de la fila següent: cap és un atzucac.
+const LANE_SEP=11;   // separació mínima entre escletxes (deixa almenys un cub entre elles)
+const PMINW=14;      // amplada mínima d'una placa (així sobresurt almenys 1,6 unitats de la paret)
+const GMIN=2.6;      // obertura mínima d'una escletxa mentre es tanca (la nau més ampla fa 1,24)
+const closeBy=(lim,g)=>Math.min(g,Math.max(0,(2*lim-2-GMIN)/2));   // cada vora pot avançar com a molt això: el forat a la graella fa ≥ 2·lim−2
+function stepLanes(S){
+  const okAt=(c,self)=>Math.abs(wd(c,cc))>=LANE_SEP&&lanes.every(o=>o===self||Math.abs(wd(c,o.c))>=LANE_SEP);
+  for(let i=lanes.length-1;i>=0;i--){
+    const l=lanes[i];
+    if(l.mg){                                   // es fusiona amb l'escletxa principal
+      const d=wd(cc,l.c);
+      l.c+=Math.sign(d)*Math.min(Math.abs(d),S);
+      if(Math.abs(wd(cc,l.c))<.3)lanes.splice(i,1);
+      continue;
+    }
+    if(Math.random()<.4)l.dir=-l.dir;
+    const dl=l.dir*R(D0.sj,1)*S;
+    if(okAt(l.c+dl,l))l.c+=dl;
+    else if(okAt(l.c-dl,l)){l.c-=dl;l.dir=-l.dir}
+  }
+  for(const l of lanes)if(!l.mg&&Math.abs(wd(l.c,cc))<LANE_SEP)l.mg=1;   // s'ha acostat massa: es fusiona
+  if(Math.random()<.22)addLane();                                           // nova escletxa
+  if(lanes.length&&Math.random()<.08)lanes[(Math.random()*lanes.length)|0].mg=1;   // fusió voluntària
+}
+function addLane(){
+  if(lanes.length+1>=D0.maxL)return false;
+  const okAt=c=>Math.abs(wd(c,cc))>=LANE_SEP&&lanes.every(o=>Math.abs(wd(c,o.c))>=LANE_SEP);
+  const b=(lanes.length&&Math.random()<.5)?lanes[(Math.random()*lanes.length)|0].c:cc;
+  for(let t=0;t<8;t++){
+    const c=b+(Math.random()<.5?-1:1)*R(LANE_SEP+4,LANE_SEP+34);
+    if(okAt(c)){lanes.push({c,dir:Math.random()<.5?-1:1,mg:0});return true}
+  }
+  return false;
+}
+// Desplaçament lateral d'un obstacle o fila a la distància z. Sempre val 0 a z=0: en arribar al triangle tot és on estava previst.
+// m: gir constant (anells i ventiladors) · A,k: oscil·lació (pèndol) · dk,dr,G: porta que es tanca de lluny i s'obre en acostar-se
+// Placa-porta: s'allarga cap a les escletxes del costat i les tanca i obre periòdicament; a z≤0 (quan la travesses) val 0
+function pext(o,z){return o.pG?o.pG*Math.pow(Math.sin(o.pk*Math.max(z,0)/2),2):0}
+function offOf(o,z){return (o.m?o.m*z:0)+(o.A?o.A*Math.sin(o.k*z):0)+(o.dk?o.dr*clamp(o.dk*z,0,o.G):0)}
+function row(z,dzPrev,opt){
+  opt=opt||{};
+  const L=level(),tn=!!opt.tunnel,thisD=tn?10:4,MW=thisD+1.2;   // anells gruixuts: 4 (túnel: 10) de fondària; MW = finestra de pas (triangle + fondària)
+  const pa=px+clamp(vx*Math.max(z,0)/Math.max(speed,1),-45*KC,45*KC);
+  let S=0;
+  if(rows.length&&!(tn&&!opt.first)){
+    const sArr=(speed+D0.boost)*1.05+1;                               // pot pujar un esglaó (túnel i/o +5%) abans d'arribar-hi
+    const T=Math.max(0,(dzPrev-5-(thisD-2)-(lastD-2))/sArr);          // temps lliure entre files (comptant la fondària)
+    const reach=.8*18*Math.max(0,T-.35);
+    S=Math.min(D0.shift,reach*D0.sm);
+    if(pw&&pw.t==='ghost'){      // durant el fantasma l'escletxa va cap al triangle: en sortir-ne sempre hi ha camí
+      const arrG=dist+Math.max(z,0),lim=arrG<pw.end-60?60:S;   // les files que es creuaran amb el fantasma encara actiu la segueixen sense límit; les últimes, amb el límit normal
+      cc+=clamp(wd(pa,cc),-lim,lim);
+    }
+    else{
+      if(Math.random()>.6)dsg=-dsg;
+      const off=wd(cc,pa);
+      if(off>22*KC)dsg=-1;else if(off<-22*KC)dsg=1;
+      cc+=dsg*R(D0.sj,1)*S;
+    }
+    stepLanes(S);
+  }
+  lastD=thisD;
+  // Tipus de fila aleatori: anell sencer, mur parcial (arc) o cubs soltos. Mai només anells: els cubs sempre són ≥28%.
+  const pRing=clamp(.2+.25*D0.wv,.2,.45),pArc=.12,pMul=.16,pMix=.14,roll=Math.random();
+  let kind=tn?'ring':dist>60?(roll<pRing?'ring':roll<pRing+pArc?'arc':roll<pRing+pArc+pMul?'multi':roll<pRing+pArc+pMul+pMix?'mix':'scatter'):'scatter';
+  const arr0=dist+Math.max(z,0),trS=D0.mad?200:600;
+  // Obstacles inspirats en Tunnel Rush: ventilador, portes i pèndol (a partir de 600 m; Madness, 200 m)
+  if(!tn&&kind!=='scatter'&&arr0>=trS&&Math.random()<clamp(.16+.24*(arr0-trS)/4000,.16,.4)){const q=Math.random();kind=q<.2?'fan':q<.38?'doors':q<.52?'swing':q<.68?'plate':q<.84?'pdoor':'roll'}
+  // Els anells ofereixen sempre que poden diverses escletxes
+  if((kind==='ring'||kind==='doors'||kind==='fan'||kind==='plate'||kind==='pdoor')&&!tn){if(!lanes.length&&Math.random()<.75)addLane();if(lanes.length===1&&Math.random()<.4)addLane()}
+  if((kind==='plate'||kind==='pdoor')&&!lanes.length&&!addLane())kind='ring';   // una placa sempre té almenys 2 escletxes
+  const wall=kind!=='scatter';
+  const arr=dist+Math.max(z,0);                                      // metres en què arribarà al triangle
+  const vf=.55+.45*Math.min(1,D0.wv);                                // més murs triats = més varietat
+  // Murs que giren, cada un a la seva velocitat. La posició depèn de la distància z: en arribar és exactament on estava previst.
+  const sg=Math.random()<.5?-1:1;
+  let moving=wall&&!tn&&!['doors','swing','plate','pdoor','roll'].includes(kind)&&(kind==='fan'||(arr>=D0.mt&&Math.random()<(.3+.6*clamp((arr-D0.mt)/3000,0,1))*vf));
+  const m=!moving?0:kind==='fan'?sg*R(.13,.24)*D0.mr:sg*R(.02,.12)*D0.mr;   // el ventilador gira bastant més de pressa
+  let sA=0,sK=0;
+  if(kind==='swing'){sA=R(8,16)*KC;sK=R(.12,.2)/sA;moving=true}             // pèndol: pendent màxim A·k ≤ 0,2
+  const rollM=kind==='roll'?R(.06,.15)*D0.mr:0;if(rollM)moving=true;      // peces que rodolen: cadascuna en un sentit, com a molt a rollM
+  const slope=Math.abs(m)+sA*sK+rollM;                                              // velocitat lateral màxima en travessar-lo
+  let a=Math.max(D0.amin,D0.win-L*.05);
+  if(tn)a=Math.max(2.4,D0.win+.4);else if(moving)a+=slope*MW;   // marge pel desplaçament mentre el travesses
+  if(kind==='plate'||kind==='pdoor')a+=1.2;                         // plaques: escletxes més amples perquè es vegin bé de lluny
+  const lim=a+1.45;
+  const gaps=[cc,...lanes.map(l=>l.c)];                              // centres de totes les escletxes (posició en arribar)
+  const inGap=x=>{for(const g of gaps)if(Math.abs(wd(x,g))<lim)return true;return false};
+  rows.push({z,c:cc+m*z+(sA?sA*Math.sin(sK*z):0),c0:cc,m,A:sA,k:sK,a,d:thisD,a0:a-(moving?slope*MW:0),gaps,S,kind});
+  // Powerup: sempre dins del passadís segur d'una escletxa (mai en un túnel), un de sol alhora, cada 1000–1700 m
+  if(!tn&&cfg.pup&&!pw&&!pups.length&&arr>=nextPupD&&dist>150){
+    let t=Math.random()<.5?'ghost':'laser';if(t===pupLast&&Math.random()<.65)t=t==='ghost'?'laser':'ghost';
+    const a0p=a-(moving?slope*MW:0),bx=gaps[(Math.random()*gaps.length)|0]+R(-.45,.45)*a0p;
+    pups.push({t,bx,x:bx+m*z,z,m,ph:R(0,6.28),got:false});pupLast=t;nextPupD=arr+R(1000,1700);
+  }
+  // Monedes: sempre al centre d'una escletxa (dins del passadís segur), així agafar-les mai no obliga a arriscar-se
+  if(dist>40&&Math.random()<(tn?.85:.62)){
+    // tira de monedes: sovint a l'escletxa més propera a la moneda anterior, així es poden seguir
+    const gx=(Math.random()<.7?gaps.reduce((b2,g2)=>Math.abs(wd(g2,lastCoinX))<Math.abs(wd(b2,lastCoinX))?g2:b2):gaps[(Math.random()*gaps.length)|0]),gem=Math.random()<.1;lastCoinX=gx;
+    const cn={bx:gx,z,m,A:sA,k:sK,v:gem?5:1,ph:R(0,6.28),got:false};cn.x=gx+offOf(cn,z);coins.push(cn);
+  }
+  // Cada fila es construeix sobre la graella de cel·les de 2 unitats (0 = buida, altre = alçada del cub).
+  // Normes de separació: les escletxes lliures fan com a mínim 4 unitats (el triangle en fa .9), els forats que no són
+  // escletxes fan com a mínim 6 i els cubs solts tenen 6 unitats lliures a cada banda. Així mai hi ha un espai on no càpiga.
+  const NC=Math.round(C/2),ix=k=>((k%NC)+NC)%NC,cell=new Array(NC).fill(0),cj=new Array(NC).fill(0);
+  const hw=tn?4.6:R(3,3.8),jw=R(0,30);                              // anells molt alts
+  const arc=(c,half,h)=>{for(let k=0;k<NC;k++){const x=k*2;if(!inGap(x)&&Math.abs(wd(x,c))<=half){cell[k]=h;cj[k]=jw}}};
+  const loose=n=>{                                                   // cubs solts: cap a menys de 3 cel·les d'un altre cub
+    for(let i=0;i<n;i++){
+      for(let t=0;t<10;t++){
+        const x=Math.round((gaps[(Math.random()*gaps.length)|0]+R(-.25,.25)*C)/2)*2,k=ix(x/2);
+        if(inGap(x))continue;
+        let ok=true;for(let d=-3;d<=3;d++)if(cell[ix(k+d)]){ok=false;break}
+        if(!ok)continue;
+        cell[k]=R(2.2,3);cj[k]=R(0,30);break;
+      }
+    }
+  };
+  const nL=Math.round(Math.min(6+L*2,14)*D0.dens*1.8*KC);
+  if(kind==='ring')arc(0,1e9,hw);
+  else if(kind==='arc')arc(cc+R(-48,48),R(13,29),hw);
+  else if(kind==='multi'){const q=Math.random()<.4?3:2;for(let i=0;i<q;i++)arc(cc+R(-48,48),R(5,12),R(3,3.8))}
+  else if(kind==='doors')arc(0,1e9,tn?hw:R(5.5,7));
+  else if(kind==='plate'||kind==='pdoor')arc(0,1e9,1);                      // portes: més altes que un anell normal
+  else if(kind==='fan'){                                             // pales estretes i equidistants; les escletxes queden entre pales
+    const n=Math.random()<.4?3:Math.random()<.7?4:5,sp=C/n,bw=R(2,3.4),bh=RC*R(.72,.86);   // pales altes: arriben gairebé al centre del túnel
+    for(let i=0;i<n;i++)arc(cc+sp/2+i*sp,bw,bh);
+  }
+  else if(kind==='swing'){if(Math.random()<.5)arc(0,1e9,hw);else arc(cc+R(-48,48),R(14,26),hw)}
+  else if(kind==='mix'){arc(cc+R(-48,48),R(10,20),hw);loose(Math.ceil(nL*.6))}
+  else loose(nL);
+  // Forats massa estrets entre dos cubs (que no són escletxes): s'omplen
+  for(let k=0;k<NC;k++){
+    if(!cell[k]||cell[ix(k+1)])continue;                             // k és l'últim cub abans d'una sèrie de cel·les buides
+    let n=0;while(!cell[ix(k+1+n)])n++;
+    let touchesGap=false;for(let d=1;d<=n;d++)if(inGap(ix(k+d)*2)){touchesGap=true;break}
+    if(n<=2&&!touchesGap){const h=cell[k],j=cj[k];for(let d=1;d<=n;d++){cell[ix(k+d)]=h;cj[ix(k+d)]=j}}
+  }
+  if(kind==='plate'||kind==='pdoor'){
+    // Plaques: cada tram continu de cel·les es converteix en una placa plana (segment de cercle) que tapa el túnel fins a la corda.
+    // La col·lisió és la de tot el tram a la paret, igual que un mur; les escletxes queden entre plaques.
+    let k0=-1,nr=0;for(let k=0;k<NC;k++)if(cell[k]&&!cell[ix(k-1)]){if(k0<0)k0=k;nr++}
+    if(k0>=0&&nr>=2){   // amb una sola escletxa no es fa placa (taparia massa): queda com un anell normal
+      const pk=6.2832/R(55,85),pG=closeBy(lim,lim*.45);   // mai no tapa l'escletxa: sempre hi cap la nau
+      for(let t=0;t<NC;t++){const k=ix(k0+t);if(!cell[k]||cell[ix(k-1)])continue;
+        let n=0;while(cell[ix(k+n)]&&n<NC)n++;
+        if(n*2<PMINW)continue;                                       // una placa curta és una llenca arran de paret que gairebé no es veu: no es posa
+        const xc=(k+(n-1)/2)*2;
+        const o={x:xc,bx:xc,z,w:n*2,d:thisD,h:0,j:jw,tun:false,m:0,mv:false,sh:'plate'};
+        if(kind==='pdoor'){o.pG=pG;o.pk=pk}
+        obs.push(o);
+      }
+      return;
+    }
+    for(let k=0;k<NC;k++)if(cell[k])cell[k]=hw;                      // sense placa: anell de l'alçada normal, no una vora baixa
+  }
+  if(kind==='roll'){
+    // Triangles i cubs que rodolen. En arribar són a bx, prou lluny de qualsevol escletxa (també comptant la mida i el que es mouen mentre els travesses)
+    const n=Math.max(3,Math.round(nL*.75)),put=[],tri=Math.random()<.5;
+    for(let i=0;i<n;i++){
+      for(let t=0;t<14;t++){
+        const rr=tri?R(2.9,4):R(2.3,3.2),x=gaps[(Math.random()*gaps.length)|0]+R(-.3,.3)*C;
+        if(gaps.some(g=>Math.abs(wd(x,g))<lim+rr-1))continue;
+        if(put.some(o=>Math.abs(wd(x,o.bx))<rr+o.rr+6))continue;          // entre dues peces: o res o un forat ample
+        const mi=(Math.random()<.5?-1:1)*rollM*R(.55,1);
+        const o={bx:x,z,w:2*rr,d:Math.min(4,tri?rr*1.3:rr*1.41),h:0,j:R(0,30),tun:false,m:mi,mv:true,sh:tri?'tri':'box',rr};
+        o.x=x+offOf(o,z);put.push(o);obs.push(o);break;
+      }
+    }
+    return;
+  }
+  // Portes: el mur queda fix i una fulla surt de cada vora d'escletxa per estrènyer-la de lluny; s'obre just abans d'arribar-hi.
+  // Com que la fulla parteix de dins del mur, no s'obre cap esquerda falsa i l'escletxa mai fa menys de GMIN.
+  let dk=0,dG=0;
+  if(kind==='doors'){dG=closeBy(lim,lim*.3);dk=dG/(speed*R(.5,.7)+10)}
+  for(let k=0;k<NC;k++){
+    const h=cell[k];if(!h)continue;const x=k*2,el=!cell[ix(k-1)],er=!cell[ix(k+1)];
+    const o={bx:x,z,w:2,d:thisD,h,j:cj[k],tun:tn,m,sl:el,sr:er};
+    if(sA){o.A=sA;o.k=sK}
+    o.mv=!!(o.m||o.A);o.x=x+offOf(o,z);obs.push(o);
+    if(dk&&el!==er){const dr=el?-1:1,l={...o,dk,dr,G:dG,sl:el,sr:er,mv:true};l.x=x+offOf(l,z);obs.push(l)}
+  }
+}
+// Cada 3000 m: túnel de 6 anells molt gruixuts, equidistants i amb l'escletxa alineada. Aquí puja la velocitat.
+function spawn(){
+  while(nextZ<FAR){
+    if(tunLeft===0&&dist+nextZ>=nextTun){tunLeft=6;nextZ=Math.max(nextTun-dist,lastRowZ+14)}   // el primer anell cau als 3000 m, 6000 m...
+    if(tunLeft>0){
+      const first=tunLeft===6;
+      row(nextZ,nextZ-lastRowZ,{tunnel:true,first});
+      if(first)tunQ.push(dist+nextZ);
+      tunLeft--;if(tunLeft===0)nextTun+=3000;
+      lastRowZ=nextZ;nextZ+=tunLeft===0?speed*D0.sf+20:34;
+    }else{
+      row(nextZ,nextZ-lastRowZ);
+      lastRowZ=nextZ;nextZ+=speed*D0.sf+12;
+    }
+  }
+}
+
+// ---------- Animacions d'interfície ----------
+// show/hide: l'entrada la fan les animacions CSS (classe .on); la sortida és un fosa curt. Sense menys-moviment i sense animate() (proves), és instantani.
+function isOpen(el){return el.style.display==='flex'&&!el._a}
+function show(el){
+  if(el._a){try{el._a.cancel()}catch(e){}el._a=null}
+  if(el._pa){try{el._pa.cancel()}catch(e){}el._pa=null}   // la sortida del panell es quedava a opacitat 0 si tornaves a obrir de pressa
+  el.style.pointerEvents='';el.style.display='flex';
+  if(el.classList){el.classList.remove('on');void el.offsetWidth;el.classList.add('on')}
+}
+function hide(el){
+  if(el._a){try{el._a.cancel()}catch(e){}el._a=null}
+  if(el._pa){try{el._pa.cancel()}catch(e){}el._pa=null}
+  if(el.style.display!=='flex'||RM||typeof el.animate!=='function'){el.style.display='none';return}
+  el.style.pointerEvents='none';
+  const pn=el.querySelector&&el.querySelector('.pn,.tc');
+  if(pn&&pn.animate)el._pa=pn.animate([{transform:'none',opacity:1},{transform:'translateY(14px) scale(.96)',opacity:0}],{duration:190,easing:'ease-in',fill:'forwards'});
+  const a=el._a=el.animate([{opacity:1},{opacity:0}],{duration:200,easing:'ease-in',fill:'forwards'});
+  a.onfinish=()=>{if(el._a===a){el._a=null;el.style.display='none';el.style.pointerEvents='';if(el._pa){try{el._pa.cancel()}catch(e){}el._pa=null}}try{a.cancel()}catch(e){}};
+}
+function launchFx(){const c=$('c');if(RM||!c||!c.classList)return;c.classList.remove('launch');void c.offsetWidth;c.classList.add('launch')}
+function flashFx(){const f=$('flash');if(RM||!f||!f.classList)return;f.classList.remove('go');void f.offsetWidth;f.classList.add('go')}
+function menuMode(on){if(document.body&&document.body.classList)document.body.classList.toggle('menu',on)}
+function begin(){
+  if(st==='play'||tutOn)return;
+  if(st==='dead'&&performance.now()-deadAt<400)return;
+  if(!tutSeen){showTut(false);return}      // la primera vegada: tutorial de 5 segons
+  startRun();
+}
+function startRun(){
+  reset();st='play';paused=false;cd=0;dragId=null;dragTgt=null;parts=[];hide($('ov'));credited=false;
+  shield=false;const used=[];
+  for(const k of ['shield','ghost','laser'])if(wal.arm[k]&&wal.inv[k]>0){wal.inv[k]--;used.push(k);if(!wal.inv[k])wal.arm[k]=false}
+  if(used.length){saveWal();renderLo()}
+  if(used.includes('shield'))shield=true;
+  if(used.includes('ghost')){pw={t:'ghost',end:500,tot:500,lab:''};$('pw').style.display='flex'}
+  else if(used.includes('laser')){pw={t:'laser',left:20,tot:20,lab:''};$('pw').style.display='flex'}
+  if(used.length)setTimeout(()=>toast(used.map(k=>PWS.find(p=>p.id===k).n).join(' + ')),350);menuMode(false);launchFx();Mu.start();Mu.mode('game');Mu.sfx('start');if(D0.mad)toast('MADNESS');
+  $('home').style.display='flex';$('gear').style.display='none';$('pause').style.display='flex';
+}
+function die(){
+  st='dead';deadAt=performance.now();Mu.sfx('crash');Mu.mode('menu',1.7);pw=null;lz=null;hidePw();
+  burst();shake(16*Math.max(.8,Math.min(W,H)/500),.55);vib([40,30,120]);
+  const s=Math.floor(dist);
+  const isNew=s>best&&s>0;
+  if(s>best){best=s;bests[keyOf()]=s;try{localStorage.setItem('escletxa-bests6',JSON.stringify(bests))}catch(e){}}
+  $('t').textContent='Has xocat';
+  const got=runC,bon=distBonus(),tot=credit();
+  $('d').innerHTML='<span class="big">'+s.toLocaleString('ca')+' m</span><span class="earn">+'+tot.toLocaleString('ca')+' ◆<small>'+got+' recollides · '+bon+' per distància</small></span>';
+  $('k').textContent=(isNew?'★ Nou rècord ('+PN[presetOf()]+')':'Rècord ('+PN[presetOf()]+'): '+best.toLocaleString('ca')+' m');
+  $('go').textContent='Torna-hi';
+  flashFx();$('ov').classList.add('dead');$('ov').classList.remove('menu');show($('ov'));
+  $('home').style.display='none';$('gear').style.display='flex';$('pause').style.display='none';
+}
+// ---------- Pausa ----------
+function showPause(){
+  $('pdist').textContent=Math.floor(dist).toLocaleString('ca')+' m · Nivell '+(level()+1);
+  show($('pz'));$('resume').focus();
+}
+function pauseGame(){
+  if(st!=='play')return;
+  if(paused){if(cd>0){cd=0;$('count').style.display='none';showPause()}return}   // si estava en el compte enrere, torna a la pausa
+  paused=true;cd=0;down=false;touch=0;dragId=null;dragTgt=null;
+  $('pause').style.display='none';showPause();Mu.pause(true);
+}
+function resumeGame(){
+  if(!paused||cd>0)return;
+  hide($('pz'));cd=2.1;cdN=0;$('count').style.display='block';   // 3 · 2 · 1 abans de continuar
+}
+// ---------- Tutorial (5 s, només la primera vegada) ----------
+function tutText(){
+  const d=cfg.ctl==='drag';
+  $('tutl1').innerHTML=d?'<b>Arrossega el dit</b> a esquerra i dreta per moure la nau.':'<b>Mantén premut</b> el costat esquerre o dret de la pantalla per virar.';
+  $('tut').classList.toggle('drag',d);$('tut').classList.toggle('hold',!d);
+}
+function showTut(fromSet){
+  tutOn=true;tutFromSet=!!fromSet;tutText();
+  hide($('ov'));
+  const t=$('tut');show(t);t.classList.remove('go');void t.offsetWidth;t.classList.add('go');
+  tutSeen=true;try{localStorage.setItem('riftline-tut','1')}catch(e){}
+  tutEnd=performance.now()+5000;$('tskip').focus();
+}
+function endTut(){
+  if(!tutOn)return;
+  tutOn=false;hide($('tut'));
+  if(tutFromSet){tutFromSet=false;show($('ov'))}else startRun();
+}
+
+addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if(tutOn){if(k==='enter'||k===' '||k==='escape'){e.preventDefault();endTut()}return}
+  if(st==='play'&&(k==='escape'||k==='p')){e.preventDefault();if(paused&&cd===0)resumeGame();else pauseGame();return}
+  if(['arrowleft','arrowright','a','d',' ','enter'].includes(k)){
+    if(isOpen(setEl)||isOpen($('shop')))return;
+    e.preventDefault();keys[k]=true;
+    if(st!=='play'&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#diff')&&(k===' '||k==='enter')))begin();
+  }
+});
+addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});
+$('ov').addEventListener('pointerdown',e=>{if(e.target===$('ov')||e.target.tagName==='H1'||e.target.tagName==='P'||e.target.tagName==='SPAN'){e.preventDefault();begin()}});
+document.querySelectorAll('#diff button').forEach(b=>{
+  b.addEventListener('pointerdown',e=>e.stopPropagation());
+  b.addEventListener('click',e=>{e.stopPropagation();setDiff(+b.dataset.d);reset()});
+});
+$('go').addEventListener('pointerdown',e=>e.stopPropagation());
+$('go').addEventListener('click',e=>{e.stopPropagation();begin()});
+$('menu2').addEventListener('pointerdown',e=>e.stopPropagation());
+$('menu2').addEventListener('click',e=>{e.stopPropagation();if(st==='dead')goHome()});
+applyCfg();
+let down=false;
+const side=e=>{touch=e.clientX<W/2?-1:1};
+// Arrossegar: el triangle segueix el dit en relatiu (com un trackpad) amb la MATEIXA velocitat lateral màxima que mantenint premut,
+// així la dificultat i la garantia que sempre hi ha camí no canvien.
+addEventListener('pointerdown',e=>{
+  if(st!=='play'||paused)return;
+  if(cfg.ctl==='drag'){if(dragId===null){dragId=e.pointerId;dragX0=e.clientX;dragLastX=e.clientX;dragP0=px;dragTgt=px}}
+  else{down=true;side(e)}
+});
+addEventListener('pointermove',e=>{
+  if(st!=='play'||paused)return;
+  if(cfg.ctl==='drag'){if(e.pointerId===dragId){dragLastX=e.clientX;dragTgt=dragP0+(e.clientX-dragX0)/W*SENSK[cfg.sens-1]}}
+  else if(down)side(e);
+});
+const endPtr=e=>{
+  if(cfg.ctl==='drag'){if(e.pointerId===dragId){dragId=null;dragTgt=null}}
+  else{down=false;touch=0}
+};
+addEventListener('pointerup',endPtr);
+addEventListener('pointercancel',endPtr);
+
+// ---------- Música i efectes de so (Web Audio, tot generat en directe) ----------
+const Mu=(()=>{
+  let ac,master,mus,sfx,lp,padG,padM,padGm,on=true,started=false,timer=null,step=0,nextT=0,rate=1,mode='menu',lv=0,vr=0,pendVr=null,nb;
+  try{on=localStorage.getItem('escletxa-mute')!=='1'}catch(e){}
+  const SG=60/96/4,SM=60/84/4;                       // un setzè: partida a 96 bpm, menú a 84 bpm
+  const N=m=>440*Math.pow(2,(m-69)/12);
+  const curS=()=>mode==='game'?SG:SM;
+  function env(g,t,a,d,pk){g.gain.cancelScheduledValues(t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(pk,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d)}
+  function tone(type,f,t,a,d,pk,dest,det){
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.type=type;o.frequency.value=f;if(det)o.detune.value=det;
+    env(g,t,a,d,pk);o.connect(g);g.connect(dest);o.start(t);o.stop(t+a+d+.05);
+  }
+  function kick(t,pk){
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(42,t+.12);
+    env(g,t,.003,.22,pk);o.connect(g);g.connect(mus);o.start(t);o.stop(t+.3);
+  }
+  function noise(t,d,pk,hp,dest){
+    if(!nb){nb=ac.createBuffer(1,ac.sampleRate,ac.sampleRate);const a=nb.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1}
+    const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();
+    s.buffer=nb;s.loop=true;f.type='highpass';f.frequency.value=hp;
+    env(g,t,.002,d,pk);s.connect(f);f.connect(g);g.connect(dest);s.start(t);s.stop(t+d+.05);
+  }
+  // el pad s'abaixa un instant a cada bombo (efecte "pump")
+  function pump(t){padG.gain.cancelScheduledValues(t);padG.gain.setValueAtTime(.45,t);padG.gain.linearRampToValueAtTime(1,t+.2)}
+
+  /* ---------- MÚSICA DE PARTIDA (Am - F - C - G) ---------- */
+  const CH=[[57,60,64],[53,57,60],[48,52,55],[55,59,62]],BASS=[33,29,36,31];
+  const ARP=[0,1,2,1,2,1,2,1,0,1,2,1,2,1,2,1],ARPB=[2,1,0,1,2,1,0,1,2,1,0,1,0,1,2,1];
+  const E8=[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0];
+  // Una variant rítmica diferent per cada nivell (es repeteix cada 6): baix, bombo extra, hi-hat, claps, arpegi i "fills"
+  const VR=[
+    {bass:E8,hat:'odd',kx:[],clap:0,arp:ARP,oct:0,fill:0,oh:[]},
+    {bass:[1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0],hat:'odd',kx:[],clap:0,arp:ARP,oct:0,fill:0,oh:[14]},
+    {bass:E8,hat:'off',kx:[10],clap:0,arp:ARPB,oct:0,fill:0,oh:[]},
+    {bass:[1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,1],hat:'odd',kx:[],clap:1,arp:ARP,oct:12,fill:1,oh:[]},
+    {bass:E8,hat:'all',kx:[7,14],clap:0,arp:ARPB,oct:0,fill:0,oh:[]},
+    {bass:[1,1,0,1,1,0,1,0,1,1,0,1,1,0,1,0],hat:'odd',kx:[10],clap:1,arp:ARP,oct:12,fill:1,oh:[6,14]}
+  ];
+  const MEL1=[null,null,76,null,null,null,72,null,null,null,74,null,71,null,null,null];
+  const MEL2=[null,null,79,null,null,null,76,null,null,null,77,null,74,null,null,null];
+  function schedGame(i,t){
+    const bar=Math.floor(i/16),b4=bar%4,k=i%16;
+    if(k===0&&pendVr!==null){vr=pendVr;pendVr=null}          // la variant nova entra al principi del compàs
+    const V=VR[vr];
+    if(k===0)for(const m of CH[b4]){tone('sawtooth',N(m),t,.5,SG*15,.035,padG,-7);tone('sawtooth',N(m),t,.5,SG*15,.035,padG,7)}
+    if(V.bass[k])tone('sawtooth',N(BASS[b4]+(V.oct&&k%8===6?12:0)),t,.01,SG*1.7,.17,lp);
+    const pat=(bar%8>=4&&vr===0)?ARPB:V.arp;                  // l'arpegi canvia de dibuix cada 4 compassos
+    tone('square',N(CH[b4][pat[k]]+12+(V.oct&&k>=8?12:0)),t,.004,SG*1.4,.05,lp);
+    if(k%4===0){kick(t,.55);pump(t)}else if(V.kx.includes(k)){kick(t,.32);pump(t)}
+    if(k===4||k===12){noise(t,.16,.18,1800,mus);if(V.clap)noise(t+.012,.1,.1,2600,mus)}
+    if(V.hat==='odd'){if(k%2===1)noise(t,.04,.05,7000,mus)}
+    else if(V.hat==='all')noise(t,.03,k%4===2?.07:.035,8000,mus);
+    else if(k%4===2)noise(t,.09,.07,6500,mus);
+    if(V.oh.includes(k))noise(t,.14,.06,6000,mus);
+    if(b4===0&&k===0)noise(t,.9,.05,4500,mus);                // plat al començar cada frase de 4 compassos
+    if(b4===3&&k>=8&&k%2===0)noise(t,.06,.03+.005*(k-8),5000+k*300,mus);   // riser a l'últim compàs
+    if(V.fill&&b4===3&&k>=12)noise(t,.05,.09,1500+k*200,mus);               // fill de bateria
+    if(bar%2===1){const m=(bar%8>=4?MEL2:MEL1)[k];if(m)tone('triangle',N(m),t,.01,SG*3.2,.11,mus)}
+  }
+
+  /* ---------- MELODIA DEL MENÚ (8 compassos: Fmaj7 G Em Am Fmaj7 G C E) ---------- */
+  const MCH=[[53,57,60,64],[55,59,62,67],[52,55,59,64],[57,60,64,67],[53,57,60,64],[55,59,62,67],[48,55,60,64],[52,56,59,64]];
+  const MB=[41,43,40,45,41,43,36,40];
+  const MEL=[
+    [[0,76,6],[8,72,2],[10,74,2],[12,76,4]],
+    [[0,79,6],[8,76,2],[10,74,2],[12,71,4]],
+    [[0,72,4],[4,76,4],[8,79,4],[12,76,4]],
+    [[0,81,8],[8,79,4],[12,76,4]],
+    [[0,77,6],[8,76,2],[10,72,2],[12,69,4]],
+    [[0,74,6],[8,71,2],[10,74,2],[12,79,4]],
+    [[0,76,8],[8,72,4],[12,79,4]],
+    [[0,71,4],[4,76,4],[8,80,4],[12,76,4]]
+  ];
+  const MARP=[0,1,2,3,2,1,2,3];
+  function schedMenu(i,t){
+    const bar=Math.floor(i/16)%8,k=i%16,ch=MCH[bar];
+    if(k===0){
+      for(const m of ch){tone('sine',N(m),t,.9,SM*15,.03,padG,-5);tone('triangle',N(m),t,.9,SM*15,.02,padG,5)}
+      tone('sine',N(MB[bar]),t,.03,SM*15,.2,padG);
+      if(bar===0)noise(t,1.6,.025,3500,mus);
+    }
+    if(k%2===0)tone('triangle',N(ch[MARP[(k/2)%8]]+12),t,.005,SM*1.8,.04,lp);
+    for(const [s0,m,d] of MEL[bar])if(s0===k){
+      tone('triangle',N(m),t,.03,SM*d*.95,.1,lp,-6);tone('triangle',N(m),t,.03,SM*d*.95,.1,lp,6);tone('sine',N(m+12),t,.05,SM*d*.8,.03,lp);
+    }
+    if(k===0||k===8){kick(t,.22);pump(t)}
+    if(k%4===2)noise(t,.06,.02,8000,mus);
+    if(k%2===1)noise(t,.025,.008,9000,mus);
+  }
+
+  /* ---------- EFECTES DE SO FUTURISTES ---------- */
+  // "chirp": ona amb un salt de to ràpid + modulació FM opcional (so metàl·lic de ciència-ficció)
+  function chirp(t,f0,f1,dur,pk,type,fm){
+    const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();
+    o.type=type||'square';o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+dur*.6);
+    if(fm){const m=ac.createOscillator(),mg=ac.createGain();m.type='sine';m.frequency.value=Math.max(20,f1*fm);mg.gain.setValueAtTime(f1*1.6,t);mg.gain.exponentialRampToValueAtTime(1,t+dur);m.connect(mg);mg.connect(o.frequency);m.start(t);m.stop(t+dur+.05)}
+    f.type='lowpass';f.frequency.setValueAtTime(Math.max(200,Math.max(f0,f1)*6),t);f.frequency.exponentialRampToValueAtTime(Math.max(120,Math.min(f0,f1)*1.5),t+dur);
+    env(g,t,.003,dur,pk);o.connect(f);f.connect(g);g.connect(sfx);o.start(t);o.stop(t+dur+.05);
+  }
+  function boom(t,pk,dur){
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.frequency.setValueAtTime(130,t);o.frequency.exponentialRampToValueAtTime(34,t+dur*.7);
+    env(g,t,.004,dur,pk);o.connect(g);g.connect(sfx);o.start(t);o.stop(t+dur+.05);
+  }
+  function nsweep(t,d,pk,f0,f1,type){
+    if(!nb){nb=ac.createBuffer(1,ac.sampleRate,ac.sampleRate);const a=nb.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1}
+    const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();
+    s.buffer=nb;s.loop=true;f.type=type;f.frequency.setValueAtTime(f0,t);f.frequency.exponentialRampToValueAtTime(f1,t+d);
+    env(g,t,.01,d,pk);s.connect(f);f.connect(g);g.connect(sfx);s.start(t);s.stop(t+d+.05);
+  }
+  const SC=[0,2,4,7,9];                                        // escala pentatònica: cada tecla té el seu to
+  function playSfx(name,arg){
+    const t=ac.currentTime+.005;
+    switch(name){
+      case 'key':{const k=arg|0,f=523*Math.pow(2,(SC[k%5]+12*(Math.floor(k/5)%3))/12);chirp(t,f*.5,f,.11,.1,'square',2.01);nsweep(t,.04,.02,9000,12000,'highpass');break}
+      case 'select':chirp(t,440,880,.09,.11,'square',3.01);chirp(t+.06,660,1320,.12,.1,'sawtooth',2.01);break;
+      case 'back':chirp(t,880,330,.13,.1,'square',2.01);break;
+      case 'open':chirp(t,300,1500,.25,.09,'sawtooth',1.5);nsweep(t,.2,.03,3000,9000,'highpass');break;
+      case 'tick':{const f=300*Math.pow(2,(arg|0)/14);chirp(t,f,f*1.4,.04,.07,'square',0);break}
+      case 'start':{   // engegada: ascens de energia, arpegi brillant i impacte greu
+        const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();
+        o.type='sawtooth';o.frequency.setValueAtTime(70,t);o.frequency.exponentialRampToValueAtTime(900,t+.65);
+        f.type='lowpass';f.frequency.setValueAtTime(300,t);f.frequency.exponentialRampToValueAtTime(7000,t+.65);
+        env(g,t,.05,.7,.16);o.connect(f);f.connect(g);g.connect(sfx);o.start(t);o.stop(t+.8);
+        nsweep(t,.6,.1,900,7000,'highpass');
+        [57,64,69,76].forEach((m,j)=>chirp(t+.3+j*.07,N(m)*.6,N(m),.2,.09,'square',2.01));
+        boom(t+.62,.55,.4);
+        break}
+      case 'crash':{   // impacte: cop sord, soroll que s'apaga, avaria descendent i trossos de vidre
+        boom(t,.95,.6);
+        nsweep(t,.75,.38,6000,180,'lowpass');
+        chirp(t,700,60,.9,.2,'sawtooth',0);
+        for(let j=0;j<4;j++)chirp(t+.04+j*.05+Math.random()*.03,2200+Math.random()*2500,900,.3,.06,'sine',0);
+        break}
+      case 'pickup':{[64,69,76,81].forEach((m,j)=>chirp(t+j*.055,N(m)*.7,N(m),.16,.09,'square',2.01));nsweep(t,.3,.05,2500,9000,'highpass');break}
+      case 'powerdown':chirp(t,900,220,.35,.1,'sawtooth',0);break;
+      case 'ping':{const pf=900+clamp(1-(arg||0)/90,0,1)*900;chirp(t,pf,pf*1.02,.05,.07,'square',0);break}
+      case 'level':{   // nivell nou: arpegi ascendent sobre l'acord actual
+        const ch=CH[Math.floor(step/16)%4];
+        for(let j=0;j<5;j++)chirp(t+j*.045,N(ch[j%3]+12*Math.floor(j/3)+12),N(ch[j%3]+12*Math.floor(j/3)+12)*1.01,.14,.08,'square',0);
+        nsweep(t,.35,.07,2500,9000,'highpass');
+        tone('sine',N(ch[0]+36),t,.02,.6,.05,sfx);
+        break}
+    }
+  }
+  function init(){
+    if(ac)return;
+    ac=new (window.AudioContext||window.webkitAudioContext)();
+    master=ac.createGain();master.gain.value=on?1:0;
+    mus=ac.createGain();mus.gain.value=.55;
+    sfx=ac.createGain();sfx.gain.value=.9;
+    lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2400;lp.Q.value=2;
+    padM=ac.createGain();padGm=ac.createGain();padM.connect(lp);padGm.connect(lp);padG=(mode==='game')?padGm:padM;
+    // vibrat lent del filtre: el so "respira"
+    const lfo=ac.createOscillator(),lg=ac.createGain();lfo.frequency.value=.11;lg.gain.value=260;lfo.connect(lg);lg.connect(lp.detune);lfo.start();
+    // eco de la música
+    const dl=ac.createDelay(1),fb=ac.createGain(),wet=ac.createGain();
+    dl.delayTime.value=SG*3;fb.gain.value=.38;wet.gain.value=.5;
+    lp.connect(mus);lp.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(wet);wet.connect(mus);
+    // eco dels efectes
+    const sd=ac.createDelay(1),sf=ac.createGain(),sw=ac.createGain();
+    sd.delayTime.value=.11;sf.gain.value=.3;sw.gain.value=.3;
+    sfx.connect(sd);sd.connect(sf);sf.connect(sd);sd.connect(sw);sw.connect(master);
+    mus.connect(master);sfx.connect(master);
+    const cp=ac.createDynamicsCompressor();master.connect(cp);cp.connect(ac.destination);
+    document.addEventListener('visibilitychange',()=>{if(!ac)return;if(document.hidden)ac.suspend();else ac.resume()});
+  }
+  function tick(){
+    if(!ac)return;
+    if(nextT<ac.currentTime-.1)nextT=ac.currentTime+.05;     // si la pestanya ha estat en pausa, no recuperem notes perdudes
+    while(nextT<ac.currentTime+.25){
+      if(mode==='game')schedGame(step,nextT);else schedMenu(step,nextT);
+      step++;nextT+=curS()/(mode==='game'?rate+Math.min(lv,12)*.008:1);   // el tempo puja una mica amb el nivell
+    }
+  }
+  return{
+    start(){
+      init();if(ac.state==='suspended')ac.resume();
+      if(!started){started=true;step=0;nextT=ac.currentTime+.08;timer=setInterval(tick,60)}
+    },
+    // mode 'menu' (melodia) o 'game' (música de partida); delay en segons
+    mode(m,delay){
+      if(m===mode&&!delay)return;
+      mode=m;
+      if(m==='game'){lv=0;vr=0;pendVr=null;rate=1}
+      if(!ac)return;
+      // les veus llargues de l'antic mode (pad i baix) s'esvaeixen en lloc de sonar sota la música nova
+      const now=ac.currentTime,old=padG;
+      padG=(m==='menu')?padM:padGm;
+      if(old!==padG){old.gain.cancelScheduledValues(now);old.gain.setTargetAtTime(0,now,.07)}
+      padG.gain.cancelScheduledValues(now);padG.gain.setValueAtTime(1,now);
+      step=0;nextT=ac.currentTime+(delay||0)+.05;
+      lp.frequency.setTargetAtTime(m==='menu'?2400:1900,ac.currentTime,.1);
+      mus.gain.setTargetAtTime(m==='menu'?.5:.55,ac.currentTime,.1);
+    },
+    // cada nivell nou: arpegi d'enhorabona i una variant rítmica nova al següent compàs
+    level(L){
+      lv=L;
+      if(!ac||mode!=='game')return;
+      pendVr=L%VR.length;
+      playSfx('level');
+    },
+    sfx(name,arg){
+      if(!ac||!on)return;
+      if(ac.state==='suspended')ac.resume();
+      if(name==='crash'){   // la música s'abaixa un moment perquè l'impacte es noti
+        mus.gain.cancelScheduledValues(ac.currentTime);
+        mus.gain.setTargetAtTime(.04,ac.currentTime,.02);
+        mus.gain.setTargetAtTime(.5,ac.currentTime+1.6,.4);
+      }
+      playSfx(name,arg);
+    },
+    // pausa: la música baixa de volum però no s'atura
+    pause(p){
+      if(!ac)return;
+      const n=ac.currentTime;mus.gain.cancelScheduledValues(n);
+      mus.gain.setTargetAtTime(p?.14:(mode==='menu'?.5:.55),n,.08);
+    },
+    toggle(){
+      on=!on;if(ac)master.gain.setTargetAtTime(on?1:0,ac.currentTime,.05);
+      try{localStorage.setItem('escletxa-mute',on?'0':'1')}catch(e){}
+      return on;
+    },
+    // el filtre s'obre i el tempo puja una mica amb la velocitat
+    energy(e){
+      if(!ac||mode!=='game')return;
+      lp.frequency.setTargetAtTime(1500+e*3200,ac.currentTime,.3);
+      rate=1+e*.12;
+    },
+    get on(){return on}
+  };
+})();
+function muteUI(){
+  $('mute').textContent=Mu.on?'♪':'×';
+  $('mute').setAttribute('aria-label',Mu.on?'Silencia la música':'Activa la música');
+}
+$('mute').addEventListener('click',()=>{
+  Mu.start();
+  Mu.toggle();muteUI();
+  Mu.sfx('select');
+});
+muteUI();
+
+// ---------- So de la interfície ----------
+// La primera interacció arrenca l'àudio (els navegadors no deixen sonar abans) i, des d'aquí, sona la melodia del menú.
+addEventListener('pointerdown',()=>Mu.start(),true);
+const START_KEYS=['arrowleft','arrowright','a','d',' ','enter'];
+addEventListener('keydown',e=>{
+  Mu.start();
+  if(e.repeat||st==='play')return;
+  const k=(e.key||'').toLowerCase();
+  const inSettings=isOpen(setEl)||isOpen($('shop'));
+  if(inSettings||!START_KEYS.includes(k))Mu.sfx('key',e.keyCode||0);   // les tecles que comencen la partida ja fan el so d'engegada
+},true);
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('button');
+  if(!b||b.id==='go'||b.id==='mute')return;
+  if(b.id==='home'||b.id==='cls')Mu.sfx('back');
+  else if(b.id==='gear')Mu.sfx('open');
+  else Mu.sfx('select');
+},true);
+let lastTick=0;
+['spd','wal'].forEach(id=>$(id).addEventListener('input',e=>{
+  const now=performance.now();
+  if(now-lastTick>45){lastTick=now;Mu.sfx('tick',(+e.target.value)*2)}
+}));
+
+
+// ---------- Ajustos ----------
+function mkSw(id,opts,key,isHex){
+  const box=$(id);box.innerHTML='';
+  opts.forEach(o=>{
+    const val=Array.isArray(o)?o[0]:o,lab=Array.isArray(o)?o[1]:o;
+    const b=document.createElement('button');
+    b.setAttribute('role','radio');b.dataset.v=val;
+    if(val==='auto'){b.className='auto';b.textContent='Auto'}
+    else{b.style.background=val;b.setAttribute('aria-label',lab)}
+    b.addEventListener('click',()=>{cfg.col[key]=val;applyCfg();syncSet()});
+    box.appendChild(b);
+  });
+}
+mkSw('sw-bg',BG_OPT,'bg');mkSw('sw-ship',SHIP_OPT,'ship');mkSw('sw-wall',WALL_OPT,'wall');
+function fill(el,v,mn,mx){el.style.setProperty('--p',((v-mn)/(mx-mn)*100)+'%')}
+function syncSet(){
+  $('spd').value=cfg.sp;$('wal').value=cfg.wl;
+  syncCtl();
+  fill($('spd'),cfg.sp,1,16);fill($('wal'),cfg.wl,1,16);
+  const sl=['Molt lenta','Lenta','Tranquil·la','Suau','Mitjana','Viva','Ràpida','Molt ràpida','Brutal','Extrema','Salvatge','Límit','Insana','Boja','Frenètica','Madness'];
+  const wl=['Gairebé buit','Pocs','Alguns','Normals','Habituals','Molts','Atapeït','Molt atapeït','Mur rere mur','Mur total','Laberint','Límit','Claustrofòbic','Boig','Asfixiant','Madness'];
+  $('spdv').textContent=cfg.sp+'/16';$('walv').textContent=cfg.wl+'/16';
+  $('spd').setAttribute('aria-valuetext',sl[cfg.sp-1]);$('wal').setAttribute('aria-valuetext',wl[cfg.wl-1]);
+  // perill: velocitat i murs es multipliquen, així que tots dos pesen
+  const pe=Math.round(((cfg.sp*cfg.wl)-1)/255*100);
+  const lab=pe<8?'Relaxat':pe<18?'Assequible':pe<35?'Exigent':pe<70?'Molt dur':pe<100?'Extrem':'MADNESS';
+  $('perv').textContent=lab+' · '+pe+'%';
+  const b=$('perb');b.style.width=Math.max(4,pe)+'%';b.style.setProperty('--bw',(100/Math.max(.04,pe/100))+'%');
+  document.querySelectorAll('#pr button').forEach(x=>x.setAttribute('aria-checked',+x.dataset.p===presetOf()?'true':'false'));
+  document.querySelectorAll('#set .sw').forEach(box=>{
+    const key=box.id==='sw-bg'?'bg':box.id==='sw-ship'?'ship':'wall';
+    box.querySelectorAll('button').forEach(b=>b.setAttribute('aria-checked',b.dataset.v===cfg.col[key]?'true':'false'));
+  });
+}
+function openSet(){show(setEl);syncSet();$('cls').focus()}
+function closeSet(){
+  hide(setEl);
+  if(st==='ready'||st==='dead')reset();
+  $('gear').focus();
+}
+$('spd').addEventListener('input',e=>{cfg.sp=+e.target.value;applyCfg();syncSet()});
+$('wal').addEventListener('input',e=>{cfg.wl=+e.target.value;applyCfg();syncSet()});
+document.querySelectorAll('#pr button').forEach(b=>b.addEventListener('click',()=>{
+  const i=+b.dataset.p;if(i<4)setDiff(i)
+}));
+$('rst').addEventListener('click',()=>{cfg={sp:8,wl:7,col:{...DEF_COL},...DEF_X};applyCfg();syncSet()});
+$('cls').addEventListener('click',closeSet);
+setEl.addEventListener('pointerdown',e=>{e.stopPropagation();if(e.target===setEl)closeSet()});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&isOpen(setEl)){e.preventDefault();closeSet()}},true);
+$('gear').addEventListener('pointerdown',e=>e.stopPropagation());
+$('gear').addEventListener('click',e=>{e.stopPropagation();openSet()});
+$('mute').addEventListener('pointerdown',e=>e.stopPropagation());
+
+// ---------- Controls, vibració, efectes, pausa i tutorial ----------
+const ctlBtns=document.querySelectorAll('#ctl button');
+function syncCtl(){
+  ctlBtns.forEach(b=>b.setAttribute('aria-checked',b.dataset.c===cfg.ctl?'true':'false'));
+  $('lsp').value=cfg.spd;fill($('lsp'),cfg.spd,1,5);$('lspv').textContent='×'+SPDK[cfg.spd-1].toFixed(1);
+  $('sens').value=cfg.sens;fill($('sens'),cfg.sens,1,5);$('sensv').textContent=cfg.sens+'/5';
+  $('senrow').classList.toggle('off',cfg.ctl!=='drag');
+  $('vib').setAttribute('aria-checked',cfg.vib?'true':'false');
+  $('fx').setAttribute('aria-checked',cfg.fx?'true':'false');
+  document.querySelectorAll('#crv button').forEach(b=>b.setAttribute('aria-checked',+b.dataset.v===cfg.curve?'true':'false'));
+  $('pup').setAttribute('aria-checked',cfg.pup?'true':'false');
+}
+ctlBtns.forEach(b=>b.addEventListener('click',()=>{cfg.ctl=b.dataset.c;applyCfg();syncSet()}));
+$('lsp').addEventListener('input',e=>{cfg.spd=clamp(+e.target.value||1,1,5);applyCfg();syncSet()});
+$('sens').addEventListener('input',e=>{cfg.sens=clamp(+e.target.value||3,1,5);applyCfg();syncSet()});
+$('vib').addEventListener('click',()=>{cfg.vib=!cfg.vib;applyCfg();syncSet();vib(35)});
+$('fx').addEventListener('click',()=>{cfg.fx=!cfg.fx;applyCfg();syncSet()});
+document.querySelectorAll('#crv button').forEach(b=>b.addEventListener('click',()=>{cfg.curve=+b.dataset.v;applyCfg();syncSet()}));
+$('pup').addEventListener('click',()=>{cfg.pup=!cfg.pup;if(!cfg.pup)pups=[];applyCfg();syncSet()});
+$('tutbtn').addEventListener('click',()=>{closeSet();showTut(true)});
+$('pause').addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault()});
+$('pause').addEventListener('click',e=>{e.stopPropagation();pauseGame()});
+$('resume').addEventListener('click',e=>{e.stopPropagation();resumeGame()});
+$('pmenu').addEventListener('click',e=>{e.stopPropagation();goHome()});
+$('pz').addEventListener('pointerdown',e=>e.stopPropagation());
+$('tskip').addEventListener('click',e=>{e.stopPropagation();endTut()});
+$('tut').addEventListener('pointerdown',e=>e.stopPropagation());
+// auto-pausa: en canviar d'app, bloquejar el mòbil o treure el focus de la pàgina
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseGame()});
+addEventListener('blur',pauseGame);
+addEventListener('pagehide',pauseGame);
+
+// ---------- Tornar al menú ----------
+function goHome(){
+  if(st==='play')credit();
+  st='ready';keys.arrowleft=keys.arrowright=keys.a=keys.d=false;touch=0;down=false;
+  paused=false;cd=0;dragId=null;dragTgt=null;Mu.pause(false);
+  hide($('pz'));$('count').style.display='none';$('pause').style.display='none';
+  reset();Mu.mode('menu');
+  $('t').textContent='Speed Vortex';
+  $('d').textContent='Esquiva els cubs i travessa els murs per l’escletxa. Ajusta la velocitat i els murs a l’engranatge.';
+  $('k').textContent='Fletxes ← → o A D. Al mòbil, mantén premut un costat de la pantalla.';
+  $('go').textContent='Comença';
+  $('ov').classList.remove('dead');$('ov').classList.add('menu');menuMode(true);show($('ov'));
+  $('home').style.display='none';$('gear').style.display='flex';
+}
+$('home').addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault()});
+$('home').addEventListener('click',e=>{e.stopPropagation();goHome()});
+
+// ---------- Monedes ----------
+function getCoin(c){c.got=true;const v=c.v*curMult;runC+=v;runGot+=c.v;Mu.sfx('ping');vib(6);
+  const b=$('cnv');if(b&&b.classList){b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop')}}
+function useShield(){   // l'escut es gasta: fantasma curt (sense acceleració) i aterratge assistit com sempre
+  shield=false;pw={t:'ghost',end:dist+140,tot:140,lab:'',calm:true};$('pw').style.display='flex';
+  Mu.sfx('powerdown');vib([30,40,30]);shake(8,.35);flashFx();toast('Escut gastat');
+}
+function distBonus(){return Math.floor(dist/100)}
+function credit(){   // cobra les monedes de la partida (un sol cop)
+  if(credited)return 0;credited=true;
+  const tot=runC+distBonus();wal.c+=tot;saveWal();syncWal();return tot;
+}
+function syncWal(){const t='◆ '+wal.c.toLocaleString('ca');$('shw').textContent=t;$('shc').textContent=t;renderLo()}
+function renderLo(){
+  const lo=$('lo');lo.innerHTML='';
+  for(const p of PWS){if(!wal.inv[p.id])continue;
+    const b=document.createElement('button');b.setAttribute('aria-pressed',wal.arm[p.id]?'true':'false');
+    b.textContent=p.ic+' '+p.n+' ('+wal.inv[p.id]+')';b.title=p.d;
+    b.addEventListener('pointerdown',e=>e.stopPropagation());
+    b.addEventListener('click',e=>{e.stopPropagation();wal.arm[p.id]=!wal.arm[p.id];
+      if(wal.arm[p.id]&&p.id!=='shield'){const o=p.id==='ghost'?'laser':'ghost';wal.arm[o]=false}   // fantasma i làser no es poden combinar
+      saveWal();renderLo();Mu.sfx('select')});
+    lo.appendChild(b);
+  }
+}
+// Dibuix de la nau (al joc i a l'hangar)
+function shipCols(sh){return{m:cfg.col.ship,a:sh.acc}}
+function drawShip2D(cv,sh){
+  const c=cv.getContext('2d'),dpr=Math.min(2,window.devicePixelRatio||1),w=120,h=96;cv.width=w*dpr;cv.height=h*dpr;c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);
+  const k=58,ox=w/2,oy=h/2+12,col=shipCols(sh);
+  const gr=c.createRadialGradient(ox,oy-10,0,ox,oy-10,48);gr.addColorStop(0,sh.acc+'33');gr.addColorStop(1,sh.acc+'00');c.fillStyle=gr;c.fillRect(0,0,w,h);
+  c.shadowColor=sh.acc;c.shadowBlur=12;
+  for(let i=0;i<sh.P.length;i+=2){const pts=sh.P[i];c.fillStyle=col[sh.P[i+1]];c.beginPath();pts.forEach(([u,v],j)=>{const x=ox+u*k,y=oy-v*k*.8;j?c.lineTo(x,y):c.moveTo(x,y)});c.closePath();c.fill()}
+}
+// ---------- Hangar ----------
+let shTab='ships';
+function renderShop(){
+  const l=$('shl');l.innerHTML='';
+  document.querySelectorAll('#shtab button').forEach(b=>b.setAttribute('aria-checked',b.dataset.t===shTab?'true':'false'));
+  if(shTab==='ships'){
+    const gd=document.createElement('div');gd.className='grid';
+    for(const sh of SHIPS){
+      const own=wal.own.includes(sh.id),eq=wal.ship===sh.id,cd=document.createElement('div');cd.className='card'+(eq?' eq':'');
+      const cv=document.createElement('canvas');cd.appendChild(cv);drawShip2D(cv,sh);
+      const nb=document.createElement('b');nb.textContent=sh.n;cd.appendChild(nb);
+      const sm=document.createElement('small');sm.textContent=sh.d;cd.appendChild(sm);
+      const bt=document.createElement('button');
+      if(eq){bt.textContent='Equipada';bt.disabled=true}
+      else if(own){bt.textContent='Equipa';bt.onclick=()=>{wal.ship=sh.id;saveWal();Mu.sfx('select');renderShop()}}
+      else{bt.className='buy';bt.textContent='◆ '+sh.pr.toLocaleString('ca');bt.disabled=wal.c<sh.pr;bt.setAttribute('aria-label','Compra '+sh.n+' per '+sh.pr+' monedes');
+        bt.onclick=()=>{if(wal.c<sh.pr)return;wal.c-=sh.pr;wal.own.push(sh.id);wal.ship=sh.id;saveWal();syncWal();Mu.sfx('start');vib(20);toast(sh.n+' desbloquejada');renderShop()}}
+      cd.appendChild(bt);gd.appendChild(cd);
+    }
+    l.appendChild(gd);
+  }else{
+    const ls=document.createElement('div');ls.className='pul';
+    for(const p of PWS){
+      const cd=document.createElement('div');cd.className='card';
+      const ic=document.createElement('span');ic.className='ic';ic.textContent=p.ic;ic.style.background=p.c+'33';ic.style.color=p.c;cd.appendChild(ic);
+      const tx=document.createElement('div');tx.className='tx';
+      const nb=document.createElement('b');nb.textContent=p.n+(wal.inv[p.id]?' · tens '+wal.inv[p.id]:'');tx.appendChild(nb);
+      const sm=document.createElement('small');sm.textContent=p.d;tx.appendChild(sm);cd.appendChild(tx);
+      const bt=document.createElement('button');bt.className='buy';bt.textContent='◆ '+p.pr;bt.disabled=wal.c<p.pr;bt.setAttribute('aria-label','Compra '+p.n+' per '+p.pr+' monedes');
+      bt.onclick=()=>{if(wal.c<p.pr)return;wal.c-=p.pr;wal.inv[p.id]++;wal.arm[p.id]=true;if(p.id!=='shield'){const o=p.id==='ghost'?'laser':'ghost';wal.arm[o]=false}
+        saveWal();syncWal();Mu.sfx('select');vib(12);toast('Preparat: '+p.n);renderShop()};
+      cd.appendChild(bt);ls.appendChild(cd);
+    }
+    l.appendChild(ls);
+  }
+}
+function openShop(){if(st==='play')return;show($('shop'));shTab=shTab||'ships';renderShop();syncWal();$('shx').focus();Mu.sfx('open')}
+function closeShop(){hide($('shop'));Mu.sfx('back');$('shopb').focus()}
+$('shopb').addEventListener('pointerdown',e=>e.stopPropagation());
+$('shopb').addEventListener('click',e=>{e.stopPropagation();openShop()});
+$('shop').addEventListener('pointerdown',e=>{e.stopPropagation();if(e.target===$('shop'))closeShop()});
+$('shx').addEventListener('click',closeShop);
+document.querySelectorAll('#shtab button').forEach(b=>b.addEventListener('click',()=>{shTab=b.dataset.t;renderShop();Mu.sfx('select')}));
+addEventListener('keydown',e=>{if(e.key==='Escape'&&isOpen($('shop'))){e.preventDefault();closeShop()}},true);
+syncWal();
+
+// ---------- Powerups ----------
+function hidePw(){$('pw').style.display='none'}
+function grab(p){
+  if(pw||p.got)return;
+  p.got=true;
+  pw=p.t==='ghost'?{t:'ghost',end:dist+500,tot:500,lab:''}:{t:'laser',left:20,tot:20,lab:''};
+  Mu.sfx('pickup');vib([14,24,14]);shake(3,.25);
+  toast(p.t==='ghost'?'Fantasma · 500 m sense xocs':'Làser · 20 s');
+  $('pw').style.display='flex';
+}
+function endPw(){
+  if(!pw)return;
+  const was=pw;pw=null;lz=null;hidePw();Mu.sfx('powerdown');vib(12);
+  if(was.t==='ghost'&&dragId!==null){dragX0=dragLastX;dragP0=px;dragTgt=px}   // el dit torna a manar des d'on som ara
+}
+// Aterratge assistit: en acabar els 500 m el triangle es guia (com el bot de proves) cap a l'escletxa de la primera fila que queda.
+// El fantasma no s'acaba fins que és segur: mai no es surt dins d'un mur.
+function assist(){
+  const cur=rows.filter(r=>r.z>-(r.d||2)-.5).sort((a,b)=>a.z-b.z)[0];
+  if(!cur){endPw();return null}
+  const gc=cur.gaps.reduce((b,g)=>Math.abs(wd(g,px))<Math.abs(wd(b,px))?g:b);
+  const dpx=wd(px,gc),half=cur.a0*.8;
+  if(Math.abs(dpx)<=half+.05&&Math.abs(vx)<9){endPw();return null}
+  return clamp((-dpx-vx*.12)/3,-1,1);   // control proporcional cap al centre de l'escletxa (més suau que anar i tornar)
+}
+// Làser: projecta la trajectòria del triangle (segons la seva velocitat lateral) i troba el primer cub que tocaria
+function laserCalc(){
+  const LEND=150,sp=Math.max(speed,20);let hit=null;
+  for(const o of obs){
+    if(o.z<-.3||o.z>LEND)continue;
+    const xr=px+clamp(vx*o.z/sp,-40,40),xo=o.mv?o.bx:o.x;
+    if(Math.abs(wd(xo,xr))<o.w/2+.5){const z=Math.max(0,o.z);if(hit===null||z<hit)hit=z}
+  }
+  lz={hit,len:hit===null?LEND:Math.max(8,hit),vx0:vx,sp};
+}
+function updatePw(dt){
+  if(!pw){lz=null;return}
+  if(pw.t==='laser'){
+    pw.left-=dt;
+    if(pw.left<=0){endPw();return}
+    laserCalc();
+    const n=performance.now();
+    if(lz.hit!==null&&lz.hit<90){   // mur a prop: el raig parpelleja i sona un pitit, cada cop més de pressa
+      const per=clamp(lz.hit*7,300,620);   // cicle mínim 300 ms (≈3 cops/s): ràpid però còmode
+      if(n>=pingT){pingT=n+per;blinkAt=n;blinkPer=per;Mu.sfx('ping',lz.hit)}
+      lz.alert=true;lz.on=RM||(n-blinkAt)<blinkPer*.5;   // (amb "menys moviment" no parpelleja, però sí que pita)
+    }else{lz.alert=false;lz.on=true}
+  }else lz=null;
+  const fr=pw.t==='ghost'?clamp((pw.end-dist)/pw.tot,0,1):clamp(pw.left/pw.tot,0,1);
+  const lab=pw.t==='ghost'?(dist>=pw.end?'Fantasma · aterrant':'Fantasma'):'Làser';
+  if(lab!==pw.lab){pw.lab=lab;$('pwl').textContent=lab}
+  $('pwb').style.transform='scaleX('+fr.toFixed(3)+')';
+}
+
+function update(dt){
+  const px0=px;
+  if(st==='play'){
+    const keyDir=((keys.arrowright||keys.d?1:0)-(keys.arrowleft||keys.a?1:0));
+    const asd=(pw&&pw.t==='ghost'&&dist>=pw.end)?assist():null;
+    if(asd!==null)vx+=(asd*18-vx)*Math.min(1,dt*10);
+    else if(dragTgt!==null&&!keyDir)vx=clamp(wd(dragTgt,px)*14*SPDK[cfg.spd-1],-18*SPDK[cfg.spd-1],18*SPDK[cfg.spd-1]);   // arrossegar: segueix el dit, màxim 18 u/s (igual que mantenint premut)
+    else vx+=((touch||keyDir)*18*SPDK[cfg.spd-1]-vx)*Math.min(1,dt*10);
+    px+=vx*dt;
+    const tgt=Math.min(SPEED_CAP,(D0.base+stage*D0.boost)*Math.pow(1.05,level()));   // +5% compost cada 1000 m (el límit de 1200 és només tècnic: inassolible)
+    const gh=pw&&pw.t==='ghost'&&!pw.calm;speed+=((gh?Math.min(tgt*1.8,SPEED_CAP*1.3):tgt)-speed)*Math.min(1,dt*(gh?3:1.5));
+    Mu.energy(Math.min(1,(speed/D0.base-1)/.8+(D0.mad?.6:0)));
+    updatePw(dt);
+  }else speed=D0.v;
+  const dz=speed*dt;scroll+=dz;if(st==='play')dist+=dz;nextZ-=dz;lastRowZ-=dz;
+  if(st==='play'){
+    while(tunQ.length&&dist>=tunQ[0]){tunQ.shift();stage++;toast(capped()?'Túnel':'Túnel · velocitat +1');shake(5,.35);vib([12,30,12])}
+    const mu=multAt(dist);if(mu!==curMult){curMult=mu;toast('Monedes ×'+mu);Mu.sfx('level')}
+    const Lc=level();if(Lc!==lastLevel){lastLevel=Lc;toast(Lc>0?'Nivell '+(Lc+1)+(capped()?' · velocitat màxima':' · velocitat +5%'):'Nivell '+(Lc+1));Mu.level(Lc);shake(3,.25);vib(14)}
+  }
+  for(const o of obs){o.z-=dz;if(o.mv)o.x=o.bx+offOf(o,o.z)}
+  for(const r of rows){r.z-=dz;if(r.m||r.A)r.c=r.c0+offOf(r,r.z)}
+  rows=rows.filter(r=>r.z>-12);
+  for(const p of pups){p.z-=dz;if(p.m)p.x=p.bx+p.m*p.z}
+  pups=pups.filter(p=>!p.got&&p.z>-4);
+  for(const c of coins){c.z-=dz;if(c.m||c.A)c.x=c.bx+offOf(c,c.z)}
+  coins=coins.filter(c=>!c.got&&c.z>-4);
+  obs=obs.filter(o=>o.z+o.d+dz>.5-D);   // es conserven un fotograma més per poder comprovar-ne la col·lisió
+  spawn();
+  camX+=(px-camX)*Math.min(1,dt*8);
+  if(st==='play'){
+    // El fotograma es divideix en passos de 2 unitats de profunditat: així cap obstacle es pot "saltar" a velocitats altes
+    // i els murs que giren es comproven just al moment de travessar-los, no on són al final del fotograma.
+    const n=Math.min(300,Math.max(1,Math.ceil(dz/2)));   // passos de 2 unitats: un cub ocupa una finestra de 3
+    outer:for(let k=1;k<=n;k++){
+      const f=k/n,pxk=px0+(px-px0)*f,back=dz*(1-f);
+      for(const c of coins){if(c.got)continue;const zk=c.z+back;if(zk<1.3&&zk>-1.3){const xk=c.bx+offOf(c,zk);if(Math.abs(wd(xk,pxk))<1.7)getCoin(c)}}
+      if(!pw)for(const p of pups){if(p.got)continue;const zk=p.z+back;if(zk<1.2&&zk>-1.2){const xk=p.m?p.bx+p.m*zk:p.x;if(Math.abs(wd(xk,pxk))<1.9)grab(p)}}
+      if(pw&&pw.t==='ghost')continue;   // fantasma: res no et fa mal
+      for(const o of obs){
+        const zk=o.z+back;
+        if(zk<.5&&zk+o.d>-.5){
+          const xk=o.mv?o.bx+offOf(o,zk):o.x;
+          if(Math.abs(wd(xk,pxk))<o.w/2+(o.pG?pext(o,zk):0)+.45){if(shield){useShield();continue outer}die();break outer}
+        }
+      }
+    }
+  }
+}
+
+// Projecció de l'interior d'un cilindre: th = angle al voltant de l'eix, y = alçada sobre la paret
+/* ---------- Corbes i turons ----------
+   El túnel es "doblega" només a la pantalla: cada profunditat z es desplaça lateralment TX(z) i verticalment TY(z) (unitats de món,
+   abans de la perspectiva). La lògica del joc (escletxes, col·lisions, equitat) no se n'assabenta: viu en coordenades del cilindre. */
+const NZ=64,DZ=FAR/NZ,TX=new Float32Array(NZ+2),TY=new Float32Array(NZ+2),CP=[0,0,0,0,0,0],CK=[0,.6,1.1];
+const LZS=[];for(let k=0;k<=10;k++)LZS.push(.7*Math.pow(FAR/.7,k/10));
+function newCurves(){for(let i=0;i<6;i++)CP[i]=Math.random()*6.2832}
+const sstep=t=>t*t*(3-2*t);
+const rampS=(s,a,b)=>sstep(clamp((s-a)/(b-a),0,1));
+function tunF(s){const u=((s%3000)+3000)%3000,v=u<1500?u:u-3000;return sstep(clamp((Math.abs(v-90)-150)/120,0,1))}   // els túnels (cada 3000 m) són rectes
+function chH(s){return rampS(s,400,2000)*tunF(s)*sstep(clamp(1.3*Math.sin(s*.0023+CP[0])+.25,0,1))*(Math.sin(s*.0068+CP[1])*.65+Math.sin(s*.0117+CP[2])*.35)}
+function chV(s){return rampS(s,800,2500)*tunF(s)*sstep(clamp(1.3*Math.sin(s*.0031+CP[3])+.1,0,1))*(Math.sin(s*.0052+CP[4])*.7+Math.sin(s*.0131+CP[5])*.3)}
+function buildCurves(){
+  const k=CK[cfg.curve]||0;
+  if(!k){TX.fill(0);TY.fill(0);vpx=W/2;vpy=hor;rollT=0;return}
+  const cx=.64*W/(f*FAR)*k,cy=.14*H/(f*FAR)*k;
+  let mx=0,my=0,x=0,y=0;TX[0]=0;TY[0]=0;
+  for(let i=1;i<=NZ;i++){
+    const s=dist+(i-.5)*DZ;
+    mx+=chH(s)*cx*DZ;x+=mx*DZ;my+=chV(s)*cy*DZ;y+=my*DZ;
+    TX[i]=x;TY[i]=y;
+  }
+  vpx=W/2+TX[NZ]*f/FAR;vpy=hor-TY[NZ]*f/FAR;
+  rollT=clamp(-(TX[22]*f/(22*DZ))/W*.35,-.06,.06);   // la càmera s'inclina una mica cap a dins de la corba
+}
+function lk(T,z){const u=z/DZ;if(u<=0)return 0;if(u>=NZ)return T[NZ];const i=u|0;return T[i]+(T[i+1]-T[i])*(u-i)}
+const PT=(th,y,z)=>{const r=RC-y,s=f/z;return[W/2+(r*Math.sin(th)+lk(TX,z))*s,hor+(CAM_H-(RC-r*Math.cos(th))-lk(TY,z))*s]};
+const P=(x,y,z)=>PT(wd(x,camX)/RC,y,z);
+function quad(a,b,c,d,col){g.fillStyle=col;g.beginPath();g.moveTo(...a);g.lineTo(...b);g.lineTo(...c);g.lineTo(...d);g.closePath();g.fill()}
+
+// utilitats de color
+function hex2hsl(h){
+  let r=parseInt(h.slice(1,3),16)/255,gg=parseInt(h.slice(3,5),16)/255,b=parseInt(h.slice(5,7),16)/255;
+  const mx=Math.max(r,gg,b),mn=Math.min(r,gg,b),l=(mx+mn)/2,d=mx-mn;let hu=0,sa=0;
+  if(d){sa=d/(1-Math.abs(2*l-1));
+    if(mx===r)hu=((gg-b)/d)%6;else if(mx===gg)hu=(b-r)/d+2;else hu=(r-gg)/d+4;
+    hu*=60;if(hu<0)hu+=360}
+  return[hu,sa*100,l*100];
+}
+function hslRGB(h,s,l){
+  s/=100;l/=100;const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l);
+  const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));
+  return Math.round(f(0)*255)+','+Math.round(f(8)*255)+','+Math.round(f(4)*255);
+}
+function shade(h,dl){const[a,b,c]=hex2hsl(h);return'hsl('+a.toFixed(0)+','+Math.min(100,b).toFixed(0)+'%,'+clamp(c+dl,6,92).toFixed(0)+'%)'}
+function colsOf(o,hue){
+  let cS,cT,cF,cR;
+  const lg=Math.abs(o.dx)/(C/2)*9;   // llum: els murs del "sostre" (lluny del triangle) són una mica més clars, així es llegeix la forma de l'anell
+  if(o.tun){
+    if(cfg.col.wall==='auto'){const ht=(hue+150)%360;cS='hsl('+ht+',80%,'+(40+lg*.5).toFixed(0)+'%)';cT='hsl('+ht+',95%,80%)';cF='hsl('+ht+',90%,'+(62+lg).toFixed(0)+'%)';cR='hsl('+ht+',100%,93%)'}
+    else{cS=shade(cfg.col.wall,-8+lg*.5);cT=shade(cfg.col.wall,+28);cF=shade(cfg.col.wall,+14+lg);cR=shade(cfg.col.wall,+45)}
+  }
+  else if(cfg.col.wall==='auto'){const hh=(hue+o.j)%360;cS='hsl('+hh+',75%,'+(36+lg*.5).toFixed(0)+'%)';cT='hsl('+hh+',85%,74%)';cF='hsl('+hh+',80%,'+(54+lg).toFixed(0)+'%)';cR='hsl('+hh+',100%,90%)'}
+  else{const dj=(o.j-15)/15*4;cS=shade(cfg.col.wall,-22+dj+lg*.5);cT=shade(cfg.col.wall,+16+dj);cF=shade(cfg.col.wall,dj+lg);cR=shade(cfg.col.wall,+42)}
+  return[cS,cT,cF,cR];
+}
+function poly(pts,col){g.fillStyle=col;g.beginPath();g.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)g.lineTo(pts[i][0],pts[i][1]);g.closePath();g.fill()}
+// Plaques (segment de cercle fins a la corda) i peces que rodolen (prismes de 3 o 4 cares que giren mentre es desplacen)
+function drawShape(o,z0,z1,hue){
+  const al=Math.max(0,Math.min(1,(FAR-z0)/FADE));if(al<.02)return;
+  const[cS,cT,cF,cR]=colsOf(o,hue);g.globalAlpha=al;
+  if(o.sh==='plate'){
+    const e=pext(o,o.z),lo=(o.dx-o.w/2-e)/RC,hi=(o.dx+o.w/2+e)/RC,n=Math.max(6,Math.ceil((hi-lo)/.1));
+    const F=[],B=[];for(let i=0;i<=n;i++){const th=lo+(hi-lo)*i/n;F.push(PT(th,0,z0));B.push(PT(th,0,z1))}
+    poly(B,cS);                                                          // cara del darrere
+    quad(F[0],F[n],B[n],B[0],cT);                                        // gruix de la placa (la corda)
+    g.globalAlpha=al*.94;poly(F,cF);g.globalAlpha=al;
+    if(z0<170){g.strokeStyle=cR;g.lineWidth=1.6;g.beginPath();g.moveTo(F[0][0],F[0][1]);g.lineTo(F[n][0],F[n][1]);g.stroke();g.lineWidth=1}   // vora de neó a la corda
+    return;
+  }
+  const k=o.sh==='tri'?3:4,rr=o.rr,ph=-(o.x-o.bx)/rr+(k===4?Math.PI/4:0),F=[],B=[];
+  for(let i=0;i<k;i++){const a=ph+6.2832*i/k,u=rr*Math.sin(a),v=Math.max(0,rr-rr*Math.cos(a)),th=(o.dx+u)/RC;F.push(PT(th,v,z0));B.push(PT(th,v,z1))}
+  poly(B,cS);
+  for(let i=0;i<k;i++){const j=(i+1)%k;quad(F[i],F[j],B[j],B[i],i%2?cT:cS)}
+  poly(F,cF);
+  if(z0<150){g.strokeStyle=cR;g.lineWidth=1.2;g.beginPath();g.moveTo(F[0][0],F[0][1]);for(let i=1;i<=k;i++)g.lineTo(F[i%k][0],F[i%k][1]);g.stroke();g.lineWidth=1}
+}
+function drawScene(){
+  const L=level(),pl=pal(),hue=pl.w,sk=pl.s.toFixed(0);
+  const bgc=cfg.col.bg==='auto'?'#0f1226':cfg.col.bg;
+  const[bh,bs,bl]=hex2hsl(bgc);
+  const skyTop=cfg.col.bg==='auto'?'hsl('+sk+',45%,9%)':bgc;
+  const skyBot=cfg.col.bg==='auto'?'hsl('+sk+',45%,32%)':'hsl('+bh.toFixed(0)+','+Math.min(80,bs+10).toFixed(0)+'%,'+clamp(bl+16,18,46).toFixed(0)+'%)';
+  const floor=cfg.col.bg==='auto'?'hsl('+sk+',40%,11%)':'hsl('+bh.toFixed(0)+','+bs.toFixed(0)+'%,'+clamp(bl+3,4,30).toFixed(0)+'%)';
+  const lineRGB=cfg.col.bg==='auto'?hslRGB(pl.s,70,72):hslRGB(bh,Math.min(60,bs),70);
+  g.fillStyle=skyTop;g.fillRect(-90,-90,W+180,H+180);
+  // resplendor al final del túnel
+  let gr=g.createRadialGradient(vpx,vpy,0,vpx,vpy,Math.max(W,H)*.8);
+  gr.addColorStop(0,skyBot);gr.addColorStop(1,skyTop);
+  g.fillStyle=gr;g.fillRect(-90,-90,W+180,H+180);
+  gr=g.createLinearGradient(0,hor,0,H);
+  gr.addColorStop(0,skyBot);gr.addColorStop(1,floor);
+  g.fillStyle=gr;g.fillRect(-90,hor,W+180,H-hor+90);
+  g.lineWidth=1;
+  // línies longitudinals de la malla cilíndrica
+  g.strokeStyle='rgba('+lineRGB+',.13)';g.beginPath();
+  for(let m=0;m<C/4;m++){
+    const th=wd(m*4,camX)/RC,a=PT(th,0,LZS[0]);
+    g.moveTo(a[0],a[1]);
+    for(let k=1;k<LZS.length;k++){const b=PT(th,0,LZS[k]);g.lineTo(b[0],b[1])}   // segments: així se segueix la corba
+  }
+  g.stroke();
+  // anells de la malla (es mouen cap a tu)
+  const off=scroll%8,NS=48;
+  for(let k=-1;k<FAR/8+1;k++){
+    const vz=k*8-off+D;if(vz<.7||vz>FAR)continue;
+    g.strokeStyle='rgba('+lineRGB+','+(.32*(1-vz/FAR)).toFixed(3)+')';
+    g.beginPath();
+    for(let i=0;i<=NS;i++){const pt=PT(i/NS*2*Math.PI,0,vz);if(i)g.lineTo(pt[0],pt[1]);else g.moveTo(pt[0],pt[1])}
+    g.stroke();
+  }
+  // línies de velocitat: ratlles que surten del punt de fuga; més nombroses, llargues i visibles com més corres
+  let nl=0;
+  if(cfg.fx&&st==='play'){
+    const sx=clamp((speed-30)/110,0,1),inten=.25+.75*sx,cnt=Math.round(26+30*sx);
+    const rMin=Math.min(W,H)*.06,rMax=Math.hypot(W,H)*.62,cx=vpx,cy=vpy;
+    g.lineCap='round';
+    for(let i=0;i<cnt;i++){
+      const q=streaks[i],p=q.p,r=rMin+(rMax-rMin)*p*p,len=rMax*.16*p*(.35+1.5*sx),r0=Math.max(rMin,r-len),ca=Math.cos(q.a),sa=Math.sin(q.a);
+      g.strokeStyle='rgba('+lineRGB+','+Math.min(.55,(.04+.5*p)*inten).toFixed(3)+')';
+      g.lineWidth=.6+1.8*p;
+      g.beginPath();g.moveTo(cx+ca*r0,cy+sa*r0);g.lineTo(cx+ca*r,cy+sa*r);g.stroke();
+      nl++;
+    }
+    g.lineCap='butt';g.lineWidth=1;
+  }
+  linesN=nl;
+  // làser: raig vermell i estret que mostra per on passarà el triangle; parpelleja (i pita) quan s'acosta a un mur
+  if(lz&&pw&&pw.t==='laser'&&st==='play'){
+    const NL=16,len=lz.len,sp=lz.sp,red='255,45,70',k0=lz.alert?(lz.on?1:.14):.9;
+    g.shadowColor='rgb('+red+')';g.shadowBlur=lz.alert&&lz.on?14:7;g.lineWidth=2.6;
+    for(let i=0;i<NL;i++){
+      const z0=len*i/NL,z1=len*(i+1)/NL,x0=px+clamp(lz.vx0*z0/sp,-40,40),x1=px+clamp(lz.vx0*z1/sp,-40,40),a=1-i/NL;
+      g.globalAlpha=(.2*a+.04)*k0;
+      quad(P(x0-.15,.05,D+z0+.2),P(x1-.15,.05,D+z1+.2),P(x1+.15,.05,D+z1+.2),P(x0+.15,.05,D+z0+.2),'rgb('+red+')');
+      g.globalAlpha=(.4+.6*a)*k0;g.strokeStyle='rgb('+red+')';
+      const A=P(x0,.08,D+z0+.2),B=P(x1,.08,D+z1+.2);g.beginPath();g.moveTo(A[0],A[1]);g.lineTo(B[0],B[1]);g.stroke();
+    }
+    if(lz.hit!==null){
+      const xh=px+clamp(lz.vx0*lz.hit/sp,-40,40),H0=P(xh,.25,D+lz.hit+.1),rr=Math.max(4,1.4*f/(D+lz.hit+.1));
+      g.globalAlpha=lz.alert?(lz.on?1:.2):.9;g.lineWidth=2;g.beginPath();g.arc(H0[0],H0[1],rr,0,6.2832);g.stroke();
+    }
+    g.shadowBlur=0;g.globalAlpha=1;g.lineWidth=1;
+  }
+  // cubs i murs: de lluny a prop; dins del mateix anell, de l'angle més llunyà al més proper
+  for(const o of obs)o.dx=wd(o.x,camX);
+  const list=obs.slice().sort((a,b)=>Math.abs(a.z-b.z)>.01?b.z-a.z:Math.abs(b.dx)-Math.abs(a.dx));
+  const pu=pups.concat(coins.filter(c=>!c.got)).sort((a,b)=>b.z-a.z);let pi=0;const nowT=performance.now();
+  for(const o of list){
+    while(pi<pu.length&&pu[pi].z>=o.z)drawPick(pu[pi++],nowT);
+    const z0=Math.max(o.z+D,.35),z1=o.z+o.d+D;
+    if(z1<.35)continue;
+    if(o.sh){drawShape(o,z0,z1,hue);continue}
+    const th0=(o.dx-o.w/2)/RC,th1=(o.dx+o.w/2)/RC,h=o.h;
+    const A=PT(th0,0,z0),B=PT(th1,0,z0),Q=PT(th1,h,z0),Dd=PT(th0,h,z0),E=PT(th0,h,z1),Fp=PT(th1,h,z1);
+    const mnX=Math.min(A[0],B[0],Q[0],Dd[0],E[0],Fp[0]),mxX=Math.max(A[0],B[0],Q[0],Dd[0],E[0],Fp[0]);
+    const mnY=Math.min(A[1],B[1],Q[1],Dd[1],E[1],Fp[1]),mxY=Math.max(A[1],B[1],Q[1],Dd[1],E[1],Fp[1]);
+    if(mxX<-40||mnX>W+40||mxY<-40||mnY>H+40)continue;
+    const al=Math.max(0,Math.min(1,(FAR-z0)/FADE));
+    if(al<.02)continue;
+    g.globalAlpha=al;
+    const [cS,cT,cF,cR]=colsOf(o,hue);   // llum: els murs del "sostre" (lluny del triangle) són una mica més clars, així es llegeix la forma de l'anell
+    if(mxX-mnX<4){quad(A,B,Q,Dd,cF);continue}   // cub llunyà i petit: només la cara frontal
+    if(o.dx>0){if(o.sl)quad(A,PT(th0,0,z1),E,Dd,cS)}
+    else if(o.sr)quad(B,PT(th1,0,z1),Fp,Q,cS);
+    quad(Dd,Q,Fp,E,cT);
+    quad(A,B,Q,Dd,cF);
+    if(z0<150){g.strokeStyle=cR;g.lineWidth=1.3;g.beginPath();g.moveTo(Dd[0],Dd[1]);g.lineTo(Q[0],Q[1]);g.stroke();g.lineWidth=1}   // vora brillant: els anells es veuen com a bandes de neó
+  }
+  while(pi<pu.length)drawPick(pu[pi++],nowT);
+  g.globalAlpha=1;
+  if(st!=='dead'){   // en xocar el triangle es trenca en partícules
+    const t=vx*.02,gh=pw&&pw.t==='ghost';
+    if(gh)g.globalAlpha=RM?.5:.5+.35*Math.sin(nowT/1000*6.2832*(dist>=pw.end?3:2));   // fantasma: intermitent (més de pressa en aterrar)
+    {const hp=P(px,.03,D),hr=clamp(Math.min(W,H)*.09,34,90),hc=gh?'#6be3ff':cfg.col.ship,hg=g.createRadialGradient(hp[0],hp[1],0,hp[0],hp[1],hr);
+     hg.addColorStop(0,hc+'55');hg.addColorStop(1,hc+'00');g.fillStyle=hg;g.fillRect(hp[0]-hr,hp[1]-hr,hr*2,hr*2)}
+    g.shadowColor=gh?'#6be3ff':cfg.col.ship;g.shadowBlur=gh?20:14;
+    {const sh=shipOf(),col=shipCols(sh);for(let i=0;i<sh.P.length;i+=2)poly(sh.P[i].map(([u,w])=>P(px+u,.03+Math.max(0,t*u/.55),D+w)),col[sh.P[i+1]])}
+    g.shadowBlur=0;g.globalAlpha=1;
+  }
+  // viñeta: foscor als cantons, més forta com més es corre (centra la vista i dóna sensació de velocitat)
+  gr=g.createRadialGradient(W/2,H*.5,Math.min(W,H)*.32,W/2,H*.5,Math.hypot(W,H)*.62);
+  gr.addColorStop(0,'rgba(4,5,14,0)');gr.addColorStop(1,'rgba(4,5,14,'+(.32+(cfg.fx?.28*clamp((speed-30)/110,0,1):0)).toFixed(2)+')');
+  g.fillStyle=gr;g.fillRect(-90,-90,W+180,H+180);
+  $('sc').textContent=Math.floor(dist).toLocaleString('ca')+' m';
+  $('cnv').textContent='◆ '+runC.toLocaleString('ca');$('cnm').textContent=curMult>1?'×'+curMult:'';$('cns').textContent=shield?'◈ escut':'';
+  $('lv').textContent=st==='play'||st==='dead'?'Nivell '+(L+1)+(L>0?(capped()?' · MAX':' · +'+Math.round((Math.pow(1.05,L)-1)*100)+'%'):'')+(best?' · Rècord '+best.toLocaleString('ca'):''):'';
+}
+
+function drawPick(p,now){if(p.v)drawCoin(p,now);else drawPup(p,now)}
+// Moneda: rombe daurat que gira (gemma de 5: més gran i blava)
+function drawCoin(p,now){
+  const z=p.z+D;if(z<.5||z>FAR)return;
+  const al=Math.max(0,Math.min(1,(FAR-z)/FADE));if(al<.02)return;
+  const gem=p.v>1,c=P(p.x,(gem?1.3:1)+.15*Math.sin(now*.005+p.ph),z),r=Math.max(gem?2.4:1.8,(gem?1.05:.72)*f/z);
+  if(c[0]<-40||c[0]>W+40||c[1]<-40||c[1]>H+40)return;
+  const sx=Math.max(.18,Math.abs(Math.cos(now*.006+p.ph))),col=gem?'#8fe9ff':'#ffd76b',hi=gem?'#e6fbff':'#fff3c4';
+  g.globalAlpha=al;g.shadowColor=col;g.shadowBlur=Math.min(18,r*.8+5);g.fillStyle=col;
+  g.beginPath();g.moveTo(c[0],c[1]-r);g.lineTo(c[0]+r*.7*sx,c[1]);g.lineTo(c[0],c[1]+r);g.lineTo(c[0]-r*.7*sx,c[1]);g.closePath();g.fill();
+  g.shadowBlur=0;g.fillStyle=hi;g.beginPath();g.moveTo(c[0],c[1]-r*.55);g.lineTo(c[0]+r*.3*sx,c[1]);g.lineTo(c[0],c[1]+r*.2);g.lineTo(c[0]-r*.3*sx,c[1]);g.closePath();g.fill();
+  g.globalAlpha=1;
+}
+function drawPup(p,now){
+  const z=p.z+D;if(z<.5||z>FAR)return;
+  const al=Math.max(0,Math.min(1,(FAR-z)/FADE));if(al<.02)return;
+  const c=P(p.x,1.1+.25*Math.sin(now*.004+p.ph),z),r=Math.max(2.5,1.25*f/z);
+  if(c[0]<-60||c[0]>W+60||c[1]<-60||c[1]>H+60)return;
+  const col=p.t==='ghost'?'107,227,255':'255,60,80';
+  g.globalAlpha=al;g.shadowColor='rgb('+col+')';g.shadowBlur=Math.min(22,r*.9+6);
+  g.fillStyle='rgba('+col+',.22)';g.beginPath();g.arc(c[0],c[1],r,0,6.2832);g.fill();
+  g.shadowBlur=0;g.lineWidth=Math.max(1.5,r*.12);g.strokeStyle='rgb('+col+')';g.beginPath();g.arc(c[0],c[1],r,0,6.2832);g.stroke();
+  g.beginPath();
+  if(p.t==='ghost'){   // doble fletxa: velocitat
+    for(const o of [-.28,.28]){g.moveTo(c[0]+(o-.22)*r,c[1]-.4*r);g.lineTo(c[0]+(o+.18)*r,c[1]);g.lineTo(c[0]+(o-.22)*r,c[1]+.4*r)}
+  }else{               // mira: làser
+    g.moveTo(c[0],c[1]-.6*r);g.lineTo(c[0],c[1]+.6*r);g.moveTo(c[0]-.6*r,c[1]);g.lineTo(c[0]+.6*r,c[1]);
+  }
+  g.stroke();g.globalAlpha=1;g.lineWidth=1;
+}
+function draw(){
+  buildCurves();
+  const sa=shkAmp();
+  g.save();
+  if(sa>.05)g.translate((Math.random()*2-1)*sa,(Math.random()*2-1)*sa);
+  if(Math.abs(rollS)>.0005){g.translate(W/2,H*.55);g.rotate(rollS);g.translate(-W/2,-H*.55)}
+  drawScene();
+  if(parts.length){
+    for(const q of parts){const a=1-q.m/q.l;g.globalAlpha=a>0?a:0;g.fillStyle=q.c;g.fillRect(q.x-q.s/2,q.y-q.s/2,q.s,q.s)}
+    g.globalAlpha=1;
+  }
+  g.restore();
+}
+// efectes: línies de velocitat i partícules (s'animen amb el temps real, també després de xocar)
+function fxStep(dt){
+  rollS+=(rollT-rollS)*Math.min(1,dt*3);
+  if(st==='play'&&!paused&&cfg.fx){
+    const sx=clamp((speed-30)/110,0,1);
+    for(const q of streaks){q.p+=dt*(.5+1.2*sx)*q.v;if(q.p>=1){q.p=R(0,.08);q.a=R(0,6.2832);q.v=R(.7,1.3)}}
+  }
+  for(let i=parts.length-1;i>=0;i--){
+    const q=parts[i];q.m+=dt;
+    if(q.m>=q.l){parts.splice(i,1);continue}
+    q.vy+=1100*dt;q.vx*=Math.max(0,1-1.2*dt);q.x+=q.vx*dt;q.y+=q.vy*dt;
+  }
+}
+function loop(t){
+  const raw=(t-last)/1000||0,dt=Math.min(.05,raw);last=t;
+  if(tutOn&&performance.now()>=tutEnd)endTut();
+  if(paused){
+    if(cd>0){   // compte enrere 3 · 2 · 1
+      cd-=Math.min(.1,raw);
+      if(cd<=0){paused=false;cd=0;$('count').style.display='none';$('pause').style.display='flex';Mu.pause(false)}
+      else{const n=Math.ceil(cd/.7);if(n!==cdN){cdN=n;const c=$('count');c.textContent=n;c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop')}}
+    }
+  }else if(st!=='dead')update(dt);
+  fxStep(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+reset();requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
