@@ -236,123 +236,132 @@ body.menu #coins{opacity:0}
 <div id="coins" aria-live="off"><b id="cnv">◆ 0</b><i id="cnm"></i><span class="sh" id="cns"></span></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="flash" aria-hidden="true"></div>
-<button id="home" class="ib" aria-label="Torna al menú principal" title="Menú principal">
+<button data-i18n-aria="home" id="home" class="ib" aria-label="Torna al menú principal" title="Menú principal">
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.2 12 4l8.5 7.2"/><path d="M5.8 9.8V20h4.4v-5.2h3.6V20h4.4V9.8"/></svg>
 </button>
-<button id="gear" class="ib" aria-label="Ajustos" title="Ajustos">
+<button data-i18n-aria="settings" id="gear" class="ib" aria-label="Ajustos" title="Ajustos">
   <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.5-2-3.5-2.3.9a7.5 7.5 0 0 0-2.6-1.5L14 2.5h-4l-.5 2.4a7.5 7.5 0 0 0-2.6 1.5l-2.3-.9-2 3.5 2 1.5a7.6 7.6 0 0 0 0 3l-2 1.5 2 3.5 2.3-.9a7.5 7.5 0 0 0 2.6 1.5l.5 2.4h4l.5-2.4a7.5 7.5 0 0 0 2.6-1.5l2.3.9 2-3.5z"/></svg>
 </button>
-<button id="pause" class="ib" aria-label="Pausa" title="Pausa">
+<button data-i18n-aria="pause" id="pause" class="ib" aria-label="Pausa" title="Pausa">
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5v11M15 6.5v11" stroke-width="2.6"/></svg>
 </button>
 <div id="ov" class="on menu">
   <h1 id="t">Speed Vortex</h1>
   <p id="d">Esquiva els cubs i travessa els murs per l’escletxa. Ajusta la velocitat i els murs a l’engranatge.</p>
   <p id="k">Fletxes ← → o A D. Al mòbil, mantén premut un costat de la pantalla.</p>
-  <div id="diff" role="radiogroup" aria-label="Dificultat">
-    <button role="radio" data-d="0" aria-checked="false">Fàcil</button>
-    <button role="radio" data-d="1" aria-checked="true">Mitjà</button>
-    <button role="radio" data-d="2" aria-checked="false">Difícil</button>
-    <button role="radio" data-d="3" aria-checked="false" class="mad">Madness</button>
+  <div data-i18n-aria="diff" id="diff" role="radiogroup" aria-label="Dificultat">
+    <button data-i18n="diff0" role="radio" data-d="0" aria-checked="false">Fàcil</button>
+    <button data-i18n="diff1" role="radio" data-d="1" aria-checked="true">Mitjà</button>
+    <button data-i18n="diff2" role="radio" data-d="2" aria-checked="false">Difícil</button>
+    <button data-i18n="diff3" role="radio" data-d="3" aria-checked="false" class="mad">Madness</button>
   </div>
-  <div id="lo" role="group" aria-label="Powerups per a la propera partida"></div>
+  <div data-i18n-aria="loadout" id="lo" role="group" aria-label="Powerups per a la propera partida"></div>
   <button id="go">Comença</button>
-  <button id="shopb" class="pbtn alt">Hangar <span class="w" id="shw">◆ 0</span></button>
-  <button id="menu2" class="pbtn alt">Menú principal</button>
+  <button id="shopb" class="pbtn alt"><span data-i18n="hangar">Hangar</span> <span class="w" id="shw">◆ 0</span></button>
+  <button data-i18n="mainmenu" id="menu2" class="pbtn alt">Menú principal</button>
 </div>
 <button id="mute" class="ib" aria-label="Silencia la música" title="Música">♪</button>
 <div id="count" aria-hidden="true"></div>
 <div id="pw" role="status" aria-live="off"><span id="pwl"></span><div class="bar2"><i id="pwb"></i></div></div>
 <div id="pz" role="dialog" aria-modal="true" aria-labelledby="pzt">
-  <h2 id="pzt">Pausa</h2>
+  <h2 data-i18n="pause" id="pzt">Pausa</h2>
   <div class="pd" id="pdist"></div>
-  <button class="pbtn main" id="resume">Continua</button>
-  <button class="pbtn alt" id="pmenu">Menú principal</button>
+  <button data-i18n="resume" class="pbtn main" id="resume">Continua</button>
+  <button data-i18n="mainmenu" class="pbtn alt" id="pmenu">Menú principal</button>
 </div>
 <div id="tut" class="hold" role="dialog" aria-modal="true" aria-labelledby="tutt">
   <div class="tc">
-    <h2 id="tutt">Com es juga</h2>
+    <h2 data-i18n="howto" id="tutt">Com es juga</h2>
     <svg viewBox="0 0 220 120" aria-hidden="true">
       <g class="t-wall">
         <rect x="2" y="12" width="28" height="22" rx="3"/><rect x="32" y="12" width="28" height="22" rx="3"/>
         <rect x="62" y="12" width="28" height="22" rx="3"/><rect x="92" y="12" width="28" height="22" rx="3"/>
         <rect x="172" y="12" width="28" height="22" rx="3"/><rect x="202" y="12" width="18" height="22" rx="3"/>
       </g>
-      <text x="146" y="27" text-anchor="middle" font-size="9" fill="#a9a4d0">escletxa</text>
+      <text data-i18n="gap" x="146" y="27" text-anchor="middle" font-size="9" fill="#a9a4d0">escletxa</text>
       <g class="t-ship"><polygon points="112,66 99,96 125,96" fill="#ffffff"/></g>
       <g class="t-hold"><rect x="112" y="102" width="106" height="16" rx="8" fill="#ff9b6b" opacity=".22"/><circle cx="168" cy="110" r="5" fill="#ff9b6b"/></g>
       <g class="t-drag"><line x1="30" y1="110" x2="190" y2="110" stroke="#a9a4d0" stroke-width="2" stroke-dasharray="3 5"/><circle class="t-f1" cx="112" cy="110" r="7" fill="#ff9b6b"/></g>
     </svg>
     <p id="tutl1"></p>
-    <p>Passa per les <b>escletxes</b> dels murs sense tocar cap cub. Teclat: <b>← →</b> o <b>A D</b>.</p>
+    <p data-i18n="tut2">Passa per les <b>escletxes</b> dels murs sense tocar cap cub. Teclat: <b>← →</b> o <b>A D</b>.</p>
     <div class="tb"><i></i></div>
-    <button class="tk" id="tskip">Salta</button>
+    <button data-i18n="skip" class="tk" id="tskip">Salta</button>
   </div>
 </div>
 <div id="set" role="dialog" aria-modal="true" aria-labelledby="sh">
   <div class="pn">
-    <h2 id="sh">Ajustos</h2>
-    <p class="sub">Ajusta el joc al teu gust. Es desa en aquest navegador.</p>
+    <h2 data-i18n="settings" id="sh">Ajustos</h2>
+    <p data-i18n="setsub" class="sub">Ajusta el joc al teu gust. Es desa en aquest navegador.</p>
 
     <div class="sec" style="margin-top:0">
-      <h3>Dificultat</h3>
-      <div class="pr" id="pr" role="radiogroup" aria-label="Preajustos">
-        <button role="radio" data-p="0" aria-checked="false">Fàcil</button>
-        <button role="radio" data-p="1" aria-checked="true">Mitjà</button>
-        <button role="radio" data-p="2" aria-checked="false">Difícil</button>
-        <button role="radio" data-p="3" aria-checked="false" class="mad">Madness</button>
-        <button role="radio" data-p="4" aria-checked="false">Personalitzat</button>
+      <h3 data-i18n="diff">Dificultat</h3>
+      <div data-i18n-aria="presets" class="pr" id="pr" role="radiogroup" aria-label="Preajustos">
+        <button data-i18n="diff0" role="radio" data-p="0" aria-checked="false">Fàcil</button>
+        <button data-i18n="diff1" role="radio" data-p="1" aria-checked="true">Mitjà</button>
+        <button data-i18n="diff2" role="radio" data-p="2" aria-checked="false">Difícil</button>
+        <button data-i18n="diff3" role="radio" data-p="3" aria-checked="false" class="mad">Madness</button>
+        <button data-i18n="custom" role="radio" data-p="4" aria-checked="false">Personalitzat</button>
       </div>
-      <div class="row"><span class="lb">Velocitat del joc</span><input class="sl" id="spd" type="range" min="1" max="16" step="1" aria-label="Velocitat"><span class="val" id="spdv"></span></div>
-      <div class="row"><span class="lb">Quantitat de murs</span><input class="sl" id="wal" type="range" min="1" max="16" step="1" aria-label="Quantitat de murs"><span class="val" id="walv"></span></div>
-      <div class="peril"><div class="top"><span>Perill total</span><b id="perv"></b></div><div class="bar"><i id="perb"></i></div></div>
+      <div class="row"><span data-i18n="speedlb" class="lb">Velocitat del joc</span><input data-i18n-aria="speedaria" class="sl" id="spd" type="range" min="1" max="16" step="1" aria-label="Velocitat"><span class="val" id="spdv"></span></div>
+      <div class="row"><span data-i18n="wallslb" class="lb">Quantitat de murs</span><input data-i18n-aria="wallslb" class="sl" id="wal" type="range" min="1" max="16" step="1" aria-label="Quantitat de murs"><span class="val" id="walv"></span></div>
+      <div class="peril"><div class="top"><span data-i18n="danger">Perill total</span><b id="perv"></b></div><div class="bar"><i id="perb"></i></div></div>
     </div>
 
     <div class="sec">
-      <h3>Colors</h3>
-      <div class="row"><span class="lb">Fons</span><div class="sw" id="sw-bg" role="radiogroup" aria-label="Color de fons"></div></div>
-      <div class="row"><span class="lb">Nau</span><div class="sw" id="sw-ship" role="radiogroup" aria-label="Color de la nau"></div></div>
-      <div class="row"><span class="lb">Murs</span><div class="sw" id="sw-wall" role="radiogroup" aria-label="Color dels murs"></div></div>
+      <h3 data-i18n="colors">Colors</h3>
+      <div class="row"><span data-i18n="bg" class="lb">Fons</span><div data-i18n-aria="bgaria" class="sw" id="sw-bg" role="radiogroup" aria-label="Color de fons"></div></div>
+      <div class="row"><span data-i18n="ship" class="lb">Nau</span><div data-i18n-aria="shiparia" class="sw" id="sw-ship" role="radiogroup" aria-label="Color de la nau"></div></div>
+      <div class="row"><span data-i18n="walls" class="lb">Murs</span><div data-i18n-aria="wallaria" class="sw" id="sw-wall" role="radiogroup" aria-label="Color dels murs"></div></div>
     </div>
 
     <div class="sec">
-      <h3>Controls</h3>
-      <div class="seg" id="ctl" role="radiogroup" aria-label="Tipus de control">
-        <button role="radio" data-c="hold" aria-checked="true">Mantenir premut</button>
-        <button role="radio" data-c="drag" aria-checked="false">Arrossegar</button>
+      <h3 data-i18n="controls">Controls</h3>
+      <div data-i18n-aria="ctlaria" class="seg" id="ctl" role="radiogroup" aria-label="Tipus de control">
+        <button data-i18n="hold" role="radio" data-c="hold" aria-checked="true">Mantenir premut</button>
+        <button data-i18n="drag" role="radio" data-c="drag" aria-checked="false">Arrossegar</button>
       </div>
-      <div class="row"><span class="lb">Sensibilitat</span><input class="sl" id="lsp" type="range" min="1" max="5" step="1" aria-label="Sensibilitat: velocitat de la nau en prémer els botons"><span class="val" id="lspv"></span></div>
-      <div class="row" id="senrow"><span class="lb">Recorregut en arrossegar</span><input class="sl" id="sens" type="range" min="1" max="5" step="1" aria-label="Sensibilitat de l'arrossegament"><span class="val" id="sensv"></span></div>
-      <div class="tg"><span>Vibració en xocar</span><button class="sw2" id="vib" role="switch" aria-checked="true" aria-label="Vibració"></button></div>
-      <div class="tg"><span>Efectes de moviment<br><small>línies de velocitat i sacsejada</small></span><button class="sw2" id="fx" role="switch" aria-checked="true" aria-label="Efectes de moviment"></button></div>
-      <button class="linkb" id="tutbtn">Veure el tutorial</button>
+      <div class="row"><span data-i18n="sens" class="lb">Sensibilitat</span><input data-i18n-aria="sensaria" class="sl" id="lsp" type="range" min="1" max="5" step="1" aria-label="Sensibilitat: velocitat de la nau en prémer els botons"><span class="val" id="lspv"></span></div>
+      <div class="row" id="senrow"><span data-i18n="travel" class="lb">Recorregut en arrossegar</span><input data-i18n-aria="travelaria" class="sl" id="sens" type="range" min="1" max="5" step="1" aria-label="Sensibilitat de l'arrossegament"><span class="val" id="sensv"></span></div>
+      <div class="tg"><span data-i18n="vib">Vibració en xocar</span><button data-i18n-aria="vibaria" class="sw2" id="vib" role="switch" aria-checked="true" aria-label="Vibració"></button></div>
+      <div class="tg"><span data-i18n="fx">Efectes de moviment<br><small>línies de velocitat i sacsejada</small></span><button data-i18n-aria="fxaria" class="sw2" id="fx" role="switch" aria-checked="true" aria-label="Efectes de moviment"></button></div>
+      <button data-i18n="seetut" class="linkb" id="tutbtn">Veure el tutorial</button>
     </div>
 
     <div class="sec">
-      <h3>Túnel i bonificacions</h3>
-      <div class="seg" id="crv" role="radiogroup" aria-label="Corbes del túnel">
-        <button role="radio" data-v="0" aria-checked="false">Recte</button>
-        <button role="radio" data-v="1" aria-checked="true">Corbes suaus</button>
-        <button role="radio" data-v="2" aria-checked="false">Intenses</button>
+      <h3 data-i18n="tunnelsec">Túnel i bonificacions</h3>
+      <div data-i18n-aria="crvaria" class="seg" id="crv" role="radiogroup" aria-label="Corbes del túnel">
+        <button data-i18n="crv0" role="radio" data-v="0" aria-checked="false">Recte</button>
+        <button data-i18n="crv1" role="radio" data-v="1" aria-checked="true">Corbes suaus</button>
+        <button data-i18n="crv2" role="radio" data-v="2" aria-checked="false">Intenses</button>
       </div>
-      <div class="tg"><span>Powerups<br><small>fantasma i làser que apareixen al mapa</small></span><button class="sw2" id="pup" role="switch" aria-checked="true" aria-label="Powerups"></button></div>
+      <div class="tg"><span data-i18n="pups">Powerups<br><small>fantasma i làser que apareixen al mapa</small></span><button data-i18n-aria="pupsaria" class="sw2" id="pup" role="switch" aria-checked="true" aria-label="Powerups"></button></div>
+    </div>
+
+    <div class="sec">
+      <h3 data-i18n="lang">Idioma</h3>
+      <div class="seg" id="lng" role="radiogroup" aria-label="Idioma" data-i18n-aria="lang">
+        <button role="radio" data-l="ca" aria-checked="false">Català</button>
+        <button role="radio" data-l="en" aria-checked="false">English</button>
+        <button role="radio" data-l="es" aria-checked="false">Español</button>
+      </div>
     </div>
 
     <div class="acts">
-      <button class="ghost" id="rst">Restableix</button>
-      <button class="ok" id="cls">Fet</button>
+      <button data-i18n="reset" class="ghost" id="rst">Restableix</button>
+      <button data-i18n="done" class="ok" id="cls">Fet</button>
     </div>
   </div>
 </div>
 <div id="shop" role="dialog" aria-modal="true" aria-labelledby="shh">
   <div class="pn">
-    <div class="hd"><h2 id="shh">Hangar</h2><span class="wal" id="shc">◆ 0</span></div>
+    <div class="hd"><h2 data-i18n="hangar" id="shh">Hangar</h2><span class="wal" id="shc">◆ 0</span></div>
     <div class="seg" id="shtab" role="tablist">
-      <button role="tab" data-t="ships" aria-checked="true">Naus</button>
-      <button role="tab" data-t="pw" aria-checked="false">Powerups inicials</button>
+      <button data-i18n="tabships" role="tab" data-t="ships" aria-checked="true">Naus</button>
+      <button data-i18n="tabpw" role="tab" data-t="pw" aria-checked="false">Powerups inicials</button>
     </div>
     <div id="shl"></div>
-    <div class="acts"><button class="ok" id="shx">Fet</button></div>
+    <div class="acts"><button data-i18n="done" class="ok" id="shx">Fet</button></div>
   </div>
 </div>
 <script>
@@ -361,6 +370,108 @@ const cv=document.getElementById('c'),g=cv.getContext('2d');
 const $=id=>document.getElementById(id);
 function toast(t){const e=$('toast');e.textContent=t;e.classList.remove('on');void e.offsetWidth;e.classList.add('on')}
 const setEl=$('set');
+// ---------- Idiomes ----------
+const STR={
+  ca:{
+    menud:'Esquiva els cubs i travessa els murs per l’escletxa. Ajusta la velocitat i els murs a l’engranatge.',
+    menuk:'Fletxes ← → o A D. Al mòbil, mantén premut un costat de la pantalla.',
+    start:'Comença',again:'Torna-hi',crashed:'Has xocat',
+    earned:'{0} recollides · {1} per distància',newbest:'★ Nou rècord ({0})',bestin:'Rècord ({0}): {1} m',bestshort:'Rècord {0}',
+    level:'Nivell {0}',plus5:' · velocitat +5%',maxspeed:' · velocitat màxima',tunnel:'Túnel',tunnelup:'Túnel · velocitat +1',coinsx:'Monedes ×{0}',
+    ghost:'Fantasma',landing:'Fantasma · aterrant',laser:'Làser',ghostgot:'Fantasma · 500 m sense xocs',lasergot:'Làser · 20 s',shieldused:'Escut gastat',shieldhud:'◈ escut',
+    equipped:'Equipada',equip:'Equipa',buy:'Compra {0} per {1} monedes',unlocked:'{0} desbloquejada',have:'tens {0}',armed:'Preparat: {0}',
+    muteoff:'Silencia la música',muteon:'Activa la música',
+    tutdrag:'<b>Arrossega el dit</b> a esquerra i dreta per moure la nau.',tuthold:'<b>Mantén premut</b> el costat esquerre o dret de la pantalla per virar.',
+    tut2:'Passa per les <b>escletxes</b> dels murs sense tocar cap cub. Teclat: <b>← →</b> o <b>A D</b>.',gap:'escletxa',howto:'Com es juga',skip:'Salta',
+    home:'Torna al menú principal',mainmenu:'Menú principal',settings:'Ajustos',pause:'Pausa',resume:'Continua',diff:'Dificultat',loadout:'Powerups per a la propera partida',
+    diff0:'Fàcil',diff1:'Mitjà',diff2:'Difícil',diff3:'Madness',custom:'Personalitzat',presets:'Preajustos',
+    setsub:'Ajusta el joc al teu gust. Es desa en aquest navegador.',speedlb:'Velocitat del joc',speedaria:'Velocitat',wallslb:'Quantitat de murs',danger:'Perill total',
+    colors:'Colors',bg:'Fons',ship:'Nau',walls:'Murs',bgaria:'Color de fons',shiparia:'Color de la nau',wallaria:'Color dels murs',
+    controls:'Controls',ctlaria:'Tipus de control',hold:'Mantenir premut',drag:'Arrossegar',sens:'Sensibilitat',sensaria:'Sensibilitat: velocitat de la nau en prémer els botons',
+    travel:'Recorregut en arrossegar',travelaria:'Sensibilitat de l’arrossegament',vib:'Vibració en xocar',vibaria:'Vibració',
+    fx:'Efectes de moviment<br><small>línies de velocitat i sacsejada</small>',fxaria:'Efectes de moviment',seetut:'Veure el tutorial',
+    tunnelsec:'Túnel i bonificacions',crvaria:'Corbes del túnel',crv0:'Recte',crv1:'Corbes suaus',crv2:'Intenses',
+    pups:'Powerups<br><small>fantasma i làser que apareixen al mapa</small>',pupsaria:'Powerups',reset:'Restableix',done:'Fet',lang:'Idioma',
+    hangar:'Hangar',tabships:'Naus',tabpw:'Powerups inicials',
+    pn:['fàcil','mitjà','difícil','madness','personalitzat'],
+    spv:['Molt lenta','Lenta','Tranquil·la','Suau','Mitjana','Viva','Ràpida','Molt ràpida','Brutal','Extrema','Salvatge','Límit','Insana','Boja','Frenètica','Madness'],
+    wlv:['Gairebé buit','Pocs','Alguns','Normals','Habituals','Molts','Atapeït','Molt atapeït','Mur rere mur','Mur total','Laberint','Límit','Claustrofòbic','Boig','Asfixiant','Madness'],
+    peril:['Relaxat','Assequible','Exigent','Molt dur','Extrem','MADNESS'],
+    items:{
+      fletxa:['Fletxa','La clàssica. Lleugera i fiable.'],falco:['Falcó','Ales en fletxa i cabina blava.'],manta:['Manta','Ample i arrodonida, amb cua llarga.'],
+      agulla:['Agulla','Fina com una agulla, amb aletes.'],bumerang:['Bumerang','Una V perfecta amb nucli brillant.'],prisma:['Prisma','Diamant de vidre amb aletes.'],fenix:['Fènix','Plomes de foc. La més vistosa.'],
+      shield:['Escut','Si xoques, en lloc de perdre et tornes fantasma uns segons i continues.'],ghost:['Sortida fantasma','Comences amb 500 m de fantasma: travesses els murs a tota velocitat.'],laser:['Sortida amb làser','Comences amb 20 s de làser que t’indica per on passaràs.'],
+    },
+  },
+  en:{
+    menud:'Dodge the cubes and fly through the gaps in the walls. Adjust speed and walls with the gear.',
+    menuk:'Arrow keys ← → or A D. On mobile, hold one side of the screen.',
+    start:'Start',again:'Try again',crashed:'You crashed',
+    earned:'{0} collected · {1} for distance',newbest:'★ New record ({0})',bestin:'Record ({0}): {1} m',bestshort:'Record {0}',
+    level:'Level {0}',plus5:' · speed +5%',maxspeed:' · top speed',tunnel:'Tunnel',tunnelup:'Tunnel · speed +1',coinsx:'Coins ×{0}',
+    ghost:'Ghost',landing:'Ghost · landing',laser:'Laser',ghostgot:'Ghost · 500 m without crashing',lasergot:'Laser · 20 s',shieldused:'Shield used',shieldhud:'◈ shield',
+    equipped:'Equipped',equip:'Equip',buy:'Buy {0} for {1} coins',unlocked:'{0} unlocked',have:'you have {0}',armed:'Ready: {0}',
+    muteoff:'Mute music',muteon:'Turn music on',
+    tutdrag:'<b>Drag your finger</b> left and right to move the ship.',tuthold:'<b>Hold</b> the left or right side of the screen to steer.',
+    tut2:'Fly through the <b>gaps</b> in the walls without touching any cube. Keyboard: <b>← →</b> or <b>A D</b>.',gap:'gap',howto:'How to play',skip:'Skip',
+    home:'Back to main menu',mainmenu:'Main menu',settings:'Settings',pause:'Pause',resume:'Resume',diff:'Difficulty',loadout:'Powerups for the next run',
+    diff0:'Easy',diff1:'Medium',diff2:'Hard',diff3:'Madness',custom:'Custom',presets:'Presets',
+    setsub:'Tune the game your way. Saved in this browser.',speedlb:'Game speed',speedaria:'Speed',wallslb:'Number of walls',danger:'Total danger',
+    colors:'Colors',bg:'Background',ship:'Ship',walls:'Walls',bgaria:'Background color',shiparia:'Ship color',wallaria:'Wall color',
+    controls:'Controls',ctlaria:'Control type',hold:'Hold',drag:'Drag',sens:'Sensitivity',sensaria:'Sensitivity: ship speed when holding the buttons',
+    travel:'Drag distance',travelaria:'Drag sensitivity',vib:'Vibrate on crash',vibaria:'Vibration',
+    fx:'Motion effects<br><small>speed lines and screen shake</small>',fxaria:'Motion effects',seetut:'Show tutorial',
+    tunnelsec:'Tunnel and bonuses',crvaria:'Tunnel curves',crv0:'Straight',crv1:'Gentle curves',crv2:'Intense',
+    pups:'Powerups<br><small>ghost and laser pickups on the track</small>',pupsaria:'Powerups',reset:'Reset',done:'Done',lang:'Language',
+    hangar:'Hangar',tabships:'Ships',tabpw:'Starting powerups',
+    pn:['easy','medium','hard','madness','custom'],
+    spv:['Very slow','Slow','Calm','Gentle','Medium','Lively','Fast','Very fast','Brutal','Extreme','Savage','Limit','Insane','Crazy','Frantic','Madness'],
+    wlv:['Almost empty','Few','Some','Normal','Regular','Many','Crowded','Very crowded','Wall after wall','Total wall','Labyrinth','Limit','Claustrophobic','Crazy','Suffocating','Madness'],
+    peril:['Relaxed','Manageable','Demanding','Very hard','Extreme','MADNESS'],
+    items:{
+      fletxa:['Arrow','The classic. Light and reliable.'],falco:['Falcon','Swept wings and a blue cockpit.'],manta:['Manta','Wide and rounded, with a long tail.'],
+      agulla:['Needle','Thin as a needle, with small fins.'],bumerang:['Boomerang','A perfect V with a glowing core.'],prisma:['Prism','A glass diamond with fins.'],fenix:['Phoenix','Feathers of fire. The flashiest of all.'],
+      shield:['Shield','If you crash, you turn into a ghost for a few seconds and keep going.'],ghost:['Ghost start','Start with 500 m of ghost: fly through walls at full speed.'],laser:['Laser start','Start with 20 s of laser showing where you’re heading.'],
+    },
+  },
+  es:{
+    menud:'Esquiva los cubos y cruza los muros por el hueco. Ajusta la velocidad y los muros en el engranaje.',
+    menuk:'Flechas ← → o A D. En el móvil, mantén pulsado un lado de la pantalla.',
+    start:'Empezar',again:'Otra vez',crashed:'Has chocado',
+    earned:'{0} recogidas · {1} por distancia',newbest:'★ Nuevo récord ({0})',bestin:'Récord ({0}): {1} m',bestshort:'Récord {0}',
+    level:'Nivel {0}',plus5:' · velocidad +5%',maxspeed:' · velocidad máxima',tunnel:'Túnel',tunnelup:'Túnel · velocidad +1',coinsx:'Monedas ×{0}',
+    ghost:'Fantasma',landing:'Fantasma · aterrizando',laser:'Láser',ghostgot:'Fantasma · 500 m sin choques',lasergot:'Láser · 20 s',shieldused:'Escudo gastado',shieldhud:'◈ escudo',
+    equipped:'Equipada',equip:'Equipar',buy:'Comprar {0} por {1} monedas',unlocked:'{0} desbloqueada',have:'tienes {0}',armed:'Preparado: {0}',
+    muteoff:'Silenciar la música',muteon:'Activar la música',
+    tutdrag:'<b>Arrastra el dedo</b> a izquierda y derecha para mover la nave.',tuthold:'<b>Mantén pulsado</b> el lado izquierdo o derecho de la pantalla para girar.',
+    tut2:'Pasa por los <b>huecos</b> de los muros sin tocar ningún cubo. Teclado: <b>← →</b> o <b>A D</b>.',gap:'hueco',howto:'Cómo se juega',skip:'Saltar',
+    home:'Volver al menú principal',mainmenu:'Menú principal',settings:'Ajustes',pause:'Pausa',resume:'Continuar',diff:'Dificultad',loadout:'Powerups para la próxima partida',
+    diff0:'Fácil',diff1:'Medio',diff2:'Difícil',diff3:'Madness',custom:'Personalizado',presets:'Preajustes',
+    setsub:'Ajusta el juego a tu gusto. Se guarda en este navegador.',speedlb:'Velocidad del juego',speedaria:'Velocidad',wallslb:'Cantidad de muros',danger:'Peligro total',
+    colors:'Colores',bg:'Fondo',ship:'Nave',walls:'Muros',bgaria:'Color de fondo',shiparia:'Color de la nave',wallaria:'Color de los muros',
+    controls:'Controles',ctlaria:'Tipo de control',hold:'Mantener pulsado',drag:'Arrastrar',sens:'Sensibilidad',sensaria:'Sensibilidad: velocidad de la nave al pulsar los botones',
+    travel:'Recorrido al arrastrar',travelaria:'Sensibilidad del arrastre',vib:'Vibración al chocar',vibaria:'Vibración',
+    fx:'Efectos de movimiento<br><small>líneas de velocidad y sacudida</small>',fxaria:'Efectos de movimiento',seetut:'Ver el tutorial',
+    tunnelsec:'Túnel y bonificaciones',crvaria:'Curvas del túnel',crv0:'Recto',crv1:'Curvas suaves',crv2:'Intensas',
+    pups:'Powerups<br><small>fantasma y láser que aparecen en el mapa</small>',pupsaria:'Powerups',reset:'Restablecer',done:'Hecho',lang:'Idioma',
+    hangar:'Hangar',tabships:'Naves',tabpw:'Powerups iniciales',
+    pn:['fácil','medio','difícil','madness','personalizado'],
+    spv:['Muy lenta','Lenta','Tranquila','Suave','Media','Viva','Rápida','Muy rápida','Brutal','Extrema','Salvaje','Límite','Insana','Loca','Frenética','Madness'],
+    wlv:['Casi vacío','Pocos','Algunos','Normales','Habituales','Muchos','Abarrotado','Muy abarrotado','Muro tras muro','Muro total','Laberinto','Límite','Claustrofóbico','Loco','Asfixiante','Madness'],
+    peril:['Relajado','Asequible','Exigente','Muy duro','Extremo','MADNESS'],
+    items:{
+      fletxa:['Flecha','La clásica. Ligera y fiable.'],falco:['Halcón','Alas en flecha y cabina azul.'],manta:['Manta','Ancha y redondeada, con cola larga.'],
+      agulla:['Aguja','Fina como una aguja, con aletas.'],bumerang:['Bumerán','Una V perfecta con núcleo brillante.'],prisma:['Prisma','Diamante de cristal con aletas.'],fenix:['Fénix','Plumas de fuego. La más vistosa.'],
+      shield:['Escudo','Si chocas, en lugar de perder te conviertes en fantasma unos segundos y sigues.'],ghost:['Salida fantasma','Empiezas con 500 m de fantasma: atraviesas los muros a toda velocidad.'],laser:['Salida con láser','Empiezas con 20 s de láser que te indica por dónde pasarás.'],
+    },
+  },
+};
+const LANGS=Object.keys(STR);
+let LANG=null;try{LANG=localStorage.getItem('sv-lang')}catch(e){}
+if(!LANGS.includes(LANG)){const l=((typeof navigator!=='undefined'&&navigator.language)||'').slice(0,2).toLowerCase();LANG=LANGS.includes(l)?l:'en'}   // sense preferència desada: el del dispositiu, i si no el tenim, anglès
+let T=STR[LANG];
+const t=(k,...a)=>T[k].replace(/\{(\d)\}/g,(m,i)=>a[i]);
+const nm=o=>T.items[o.id][0],ds=o=>T.items[o.id][1];
 const CAM_H=2.2,D=5,FAR=220,FADE=100,C=96,RC=C/(2*Math.PI),KC=C/160;   // KC: escala dels paràmetres que depenien de la circumferència antiga (160)
 let W,H,f,hor;
 function size(){const r=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*r;cv.height=H*r;g.setTransform(r,0,0,r,0,0);f=Math.max(W*.55,H*.7);hor=H*.36}
@@ -371,7 +482,6 @@ try{bests=JSON.parse(localStorage.getItem('escletxa-bests6'))||{}}catch(e){}
 let best=0;
 // Velocitat (1..10) i murs (1..10) → paràmetres de joc. Preajustos: fàcil / mitjà / difícil.
 const PRE=[[4,4],[8,7],[11,11],[16,16]];
-const PN=['fàcil','mitjà','difícil','madness','personalitzat'];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const wd=(a,b)=>((a-b)%C+1.5*C)%C-C/2; // distància lateral amb volta (cilindre)
 // Velocitat base segons el lliscador de velocitat (1..16), interpolada entre punts de control.
@@ -439,18 +549,18 @@ function setDiff(i){cfg.sp=PRE[i][0];cfg.wl=PRE[i][1];applyCfg();syncSet()}
 // Naus: polígons en coordenades locals (u = lateral, w = endavant). Totes tenen la mateixa col·lisió que la fletxa original.
 const MIR=p=>p.map(([u,w])=>[-u,w]).reverse();
 const SHIPS=[
-  {id:'fletxa',n:'Fletxa',pr:0,acc:'#ff9b6b',d:'La clàssica. Lleugera i fiable.',P:[[[0,1],[.55,-.4],[0,-.1],[-.55,-.4]],'m']},
-  {id:'falco',n:'Falcó',pr:10,acc:'#6be3ff',d:'Ales en fletxa i cabina blava.',P:[[[0,1.1],[.12,.3],[.6,-.35],[.18,-.2],[0,-.45],[-.18,-.2],[-.6,-.35],[-.12,.3]],'m',[[0,.78],[.07,.38],[0,.26],[-.07,.38]],'a']},
-  {id:'manta',n:'Manta',pr:10,acc:'#b46bff',d:'Ample i arrodonida, amb cua llarga.',P:[[[0,.85],[.35,.55],[.62,.05],[.3,-.15],[0,-.05],[-.3,-.15],[-.62,.05],[-.35,.55]],'m',[[.05,-.04],[0,-.62],[-.05,-.04]],'a',[[.2,.45],[.3,.38],[.22,.33]],'a',MIR([[.2,.45],[.3,.38],[.22,.33]]),'a']},
-  {id:'agulla',n:'Agulla',pr:10,acc:'#7bff9a',d:'Fina com una agulla, amb aletes.',P:[[[.08,.5],[.34,.25],[.1,.3]],'a',MIR([[.08,.5],[.34,.25],[.1,.3]]),'a',[[.1,-.12],[.44,-.45],[.08,-.34]],'a',MIR([[.1,-.12],[.44,-.45],[.08,-.34]]),'a',[[0,1.25],[.1,-.3],[0,-.45],[-.1,-.3]],'m']},
-  {id:'bumerang',n:'Bumerang',pr:10,acc:'#ffe36b',d:'Una V perfecta amb nucli brillant.',P:[[[0,.62],[.62,-.25],[.5,-.42],[0,.18],[-.5,-.42],[-.62,-.25]],'m',[[0,.46],[.13,.26],[0,.32],[-.13,.26]],'a']},
-  {id:'prisma',n:'Prisma',pr:10,acc:'#ff5f9e',d:'Diamant de vidre amb aletes.',P:[[[.38,.2],[.6,-.12],[.28,-.06]],'m',MIR([[.38,.2],[.6,-.12],[.28,-.06]]),'m',[[0,1],[.4,.2],[0,-.5],[-.4,.2]],'m',[[0,.66],[.18,.2],[0,-.2],[-.18,.2]],'a']},
-  {id:'fenix',n:'Fènix',pr:10,acc:'#ff6b3d',d:'Plomes de foc. La més vistosa.',P:[[[.08,.4],[.6,.15],[.5,-.03],[.6,-.2],[.4,-.18],[.46,-.38],[.1,-.1]],'a',MIR([[.08,.4],[.6,.15],[.5,-.03],[.6,-.2],[.4,-.18],[.46,-.38],[.1,-.1]]),'a',[[.05,-.2],[.16,-.58],[0,-.42],[-.16,-.58],[-.05,-.2]],'a',[[0,1.02],[.11,.2],[0,-.32],[-.11,.2]],'m']},
+  {id:'fletxa',pr:0,acc:'#ff9b6b',P:[[[0,1],[.55,-.4],[0,-.1],[-.55,-.4]],'m']},
+  {id:'falco',pr:10,acc:'#6be3ff',P:[[[0,1.1],[.12,.3],[.6,-.35],[.18,-.2],[0,-.45],[-.18,-.2],[-.6,-.35],[-.12,.3]],'m',[[0,.78],[.07,.38],[0,.26],[-.07,.38]],'a']},
+  {id:'manta',pr:10,acc:'#b46bff',P:[[[0,.85],[.35,.55],[.62,.05],[.3,-.15],[0,-.05],[-.3,-.15],[-.62,.05],[-.35,.55]],'m',[[.05,-.04],[0,-.62],[-.05,-.04]],'a',[[.2,.45],[.3,.38],[.22,.33]],'a',MIR([[.2,.45],[.3,.38],[.22,.33]]),'a']},
+  {id:'agulla',pr:10,acc:'#7bff9a',P:[[[.08,.5],[.34,.25],[.1,.3]],'a',MIR([[.08,.5],[.34,.25],[.1,.3]]),'a',[[.1,-.12],[.44,-.45],[.08,-.34]],'a',MIR([[.1,-.12],[.44,-.45],[.08,-.34]]),'a',[[0,1.25],[.1,-.3],[0,-.45],[-.1,-.3]],'m']},
+  {id:'bumerang',pr:10,acc:'#ffe36b',P:[[[0,.62],[.62,-.25],[.5,-.42],[0,.18],[-.5,-.42],[-.62,-.25]],'m',[[0,.46],[.13,.26],[0,.32],[-.13,.26]],'a']},
+  {id:'prisma',pr:10,acc:'#ff5f9e',P:[[[.38,.2],[.6,-.12],[.28,-.06]],'m',MIR([[.38,.2],[.6,-.12],[.28,-.06]]),'m',[[0,1],[.4,.2],[0,-.5],[-.4,.2]],'m',[[0,.66],[.18,.2],[0,-.2],[-.18,.2]],'a']},
+  {id:'fenix',pr:10,acc:'#ff6b3d',P:[[[.08,.4],[.6,.15],[.5,-.03],[.6,-.2],[.4,-.18],[.46,-.38],[.1,-.1]],'a',MIR([[.08,.4],[.6,.15],[.5,-.03],[.6,-.2],[.4,-.18],[.46,-.38],[.1,-.1]]),'a',[[.05,-.2],[.16,-.58],[0,-.42],[-.16,-.58],[-.05,-.2]],'a',[[0,1.02],[.11,.2],[0,-.32],[-.11,.2]],'m']},
 ];
 const PWS=[
-  {id:'shield',n:'Escut',pr:10,c:'#8fe9ff',ic:'◈',d:'Si xoques, en lloc de perdre et tornes fantasma uns segons i continues.'},
-  {id:'ghost',n:'Sortida fantasma',pr:10,c:'#6be3ff',ic:'»',d:'Comences amb 500 m de fantasma: travesses els murs a tota velocitat.'},
-  {id:'laser',n:'Sortida amb làser',pr:10,c:'#ff4f6e',ic:'+',d:'Comences amb 20 s de làser que t\'indica per on passaràs.'},
+  {id:'shield',pr:10,c:'#8fe9ff',ic:'◈'},
+  {id:'ghost',pr:10,c:'#6be3ff',ic:'»'},
+  {id:'laser',pr:10,c:'#ff4f6e',ic:'+'},
 ];
 const MULT=[[6000,4],[3000,3],[1000,2],[0,1]];                          // multiplicador de monedes segons la distància
 const multAt=d=>MULT.find(m=>d>=m[0])[1];
@@ -724,8 +834,24 @@ function startRun(){
   if(used.includes('shield'))shield=true;
   if(used.includes('ghost')){pw={t:'ghost',end:500,tot:500,lab:''};$('pw').style.display='flex'}
   else if(used.includes('laser')){pw={t:'laser',left:20,tot:20,lab:''};$('pw').style.display='flex'}
-  if(used.length)setTimeout(()=>toast(used.map(k=>PWS.find(p=>p.id===k).n).join(' + ')),350);menuMode(false);launchFx();Mu.start();Mu.mode('game');Mu.sfx('start');if(D0.mad)toast('MADNESS');
+  if(used.length)setTimeout(()=>toast(used.map(k=>nm(PWS.find(p=>p.id===k))).join(' + ')),350);menuMode(false);launchFx();Mu.start();Mu.mode('game');Mu.sfx('start');if(D0.mad)toast('MADNESS');
   $('home').style.display='flex';$('gear').style.display='none';$('pause').style.display='flex';
+}
+// Textos de la pantalla de menú o de mort, segons l'estat (també es tornen a escriure en canviar d'idioma)
+let deadI=null;
+function renderOv(){
+  if(st==='dead'&&deadI){
+    const{s,isNew,got,bon,tot,pn,best:b}=deadI,num=v=>v.toLocaleString(LANG);
+    $('t').textContent=t('crashed');
+    $('d').innerHTML='<span class="big">'+num(s)+' m</span><span class="earn">+'+num(tot)+' ◆<small>'+t('earned',got,bon)+'</small></span>';
+    $('k').textContent=isNew?t('newbest',T.pn[pn]):t('bestin',T.pn[pn],num(b));
+    $('go').textContent=t('again');
+  }else{
+    $('t').textContent='Speed Vortex';
+    $('d').textContent=t('menud');
+    $('k').textContent=t('menuk');
+    $('go').textContent=t('start');
+  }
 }
 function die(){
   st='dead';deadAt=performance.now();Mu.sfx('crash');Mu.mode('menu',1.7);pw=null;lz=null;hidePw();
@@ -733,17 +859,14 @@ function die(){
   const s=Math.floor(dist);
   const isNew=s>best&&s>0;
   if(s>best){best=s;bests[keyOf()]=s;try{localStorage.setItem('escletxa-bests6',JSON.stringify(bests))}catch(e){}}
-  $('t').textContent='Has xocat';
   const got=runC,bon=distBonus(),tot=credit();
-  $('d').innerHTML='<span class="big">'+s.toLocaleString('ca')+' m</span><span class="earn">+'+tot.toLocaleString('ca')+' ◆<small>'+got+' recollides · '+bon+' per distància</small></span>';
-  $('k').textContent=(isNew?'★ Nou rècord ('+PN[presetOf()]+')':'Rècord ('+PN[presetOf()]+'): '+best.toLocaleString('ca')+' m');
-  $('go').textContent='Torna-hi';
+  deadI={s,isNew,got,bon,tot,pn:presetOf(),best};renderOv();
   flashFx();$('ov').classList.add('dead');$('ov').classList.remove('menu');show($('ov'));
   $('home').style.display='none';$('gear').style.display='flex';$('pause').style.display='none';
 }
 // ---------- Pausa ----------
 function showPause(){
-  $('pdist').textContent=Math.floor(dist).toLocaleString('ca')+' m · Nivell '+(level()+1);
+  $('pdist').textContent=Math.floor(dist).toLocaleString(LANG)+' m · '+t('level',level()+1);
   show($('pz'));$('resume').focus();
 }
 function pauseGame(){
@@ -759,7 +882,7 @@ function resumeGame(){
 // ---------- Tutorial (5 s, només la primera vegada) ----------
 function tutText(){
   const d=cfg.ctl==='drag';
-  $('tutl1').innerHTML=d?'<b>Arrossega el dit</b> a esquerra i dreta per moure la nau.':'<b>Mantén premut</b> el costat esquerre o dret de la pantalla per virar.';
+  $('tutl1').innerHTML=t(d?'tutdrag':'tuthold');
   $('tut').classList.toggle('drag',d);$('tut').classList.toggle('hold',!d);
 }
 function showTut(fromSet){
@@ -1053,7 +1176,7 @@ const Mu=(()=>{
 })();
 function muteUI(){
   $('mute').textContent=Mu.on?'♪':'×';
-  $('mute').setAttribute('aria-label',Mu.on?'Silencia la música':'Activa la música');
+  $('mute').setAttribute('aria-label',t(Mu.on?'muteoff':'muteon'));
 }
 $('mute').addEventListener('click',()=>{
   Mu.start();
@@ -1106,13 +1229,11 @@ function syncSet(){
   $('spd').value=cfg.sp;$('wal').value=cfg.wl;
   syncCtl();
   fill($('spd'),cfg.sp,1,16);fill($('wal'),cfg.wl,1,16);
-  const sl=['Molt lenta','Lenta','Tranquil·la','Suau','Mitjana','Viva','Ràpida','Molt ràpida','Brutal','Extrema','Salvatge','Límit','Insana','Boja','Frenètica','Madness'];
-  const wl=['Gairebé buit','Pocs','Alguns','Normals','Habituals','Molts','Atapeït','Molt atapeït','Mur rere mur','Mur total','Laberint','Límit','Claustrofòbic','Boig','Asfixiant','Madness'];
   $('spdv').textContent=cfg.sp+'/16';$('walv').textContent=cfg.wl+'/16';
-  $('spd').setAttribute('aria-valuetext',sl[cfg.sp-1]);$('wal').setAttribute('aria-valuetext',wl[cfg.wl-1]);
+  $('spd').setAttribute('aria-valuetext',T.spv[cfg.sp-1]);$('wal').setAttribute('aria-valuetext',T.wlv[cfg.wl-1]);
   // perill: velocitat i murs es multipliquen, així que tots dos pesen
   const pe=Math.round(((cfg.sp*cfg.wl)-1)/255*100);
-  const lab=pe<8?'Relaxat':pe<18?'Assequible':pe<35?'Exigent':pe<70?'Molt dur':pe<100?'Extrem':'MADNESS';
+  const lab=T.peril[pe<8?0:pe<18?1:pe<35?2:pe<70?3:pe<100?4:5];
   $('perv').textContent=lab+' · '+pe+'%';
   const b=$('perb');b.style.width=Math.max(4,pe)+'%';b.style.setProperty('--bw',(100/Math.max(.04,pe/100))+'%');
   document.querySelectorAll('#pr button').forEach(x=>x.setAttribute('aria-checked',+x.dataset.p===presetOf()?'true':'false'));
@@ -1179,10 +1300,7 @@ function goHome(){
   paused=false;cd=0;dragId=null;dragTgt=null;Mu.pause(false);
   hide($('pz'));$('count').style.display='none';$('pause').style.display='none';
   reset();Mu.mode('menu');
-  $('t').textContent='Speed Vortex';
-  $('d').textContent='Esquiva els cubs i travessa els murs per l’escletxa. Ajusta la velocitat i els murs a l’engranatge.';
-  $('k').textContent='Fletxes ← → o A D. Al mòbil, mantén premut un costat de la pantalla.';
-  $('go').textContent='Comença';
+  renderOv();
   $('ov').classList.remove('dead');$('ov').classList.add('menu');menuMode(true);show($('ov'));
   $('home').style.display='none';$('gear').style.display='flex';
 }
@@ -1194,19 +1312,19 @@ function getCoin(c){c.got=true;const v=c.v*curMult;runC+=v;runGot+=c.v;Mu.sfx('p
   const b=$('cnv');if(b&&b.classList){b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop')}}
 function useShield(){   // l'escut es gasta: fantasma curt (sense acceleració) i aterratge assistit com sempre
   shield=false;pw={t:'ghost',end:dist+140,tot:140,lab:'',calm:true};$('pw').style.display='flex';
-  Mu.sfx('powerdown');vib([30,40,30]);shake(8,.35);flashFx();toast('Escut gastat');
+  Mu.sfx('powerdown');vib([30,40,30]);shake(8,.35);flashFx();toast(t('shieldused'));
 }
 function distBonus(){return Math.floor(dist/100)}
 function credit(){   // cobra les monedes de la partida (un sol cop)
   if(credited)return 0;credited=true;
   const tot=runC+distBonus();wal.c+=tot;saveWal();syncWal();return tot;
 }
-function syncWal(){const t='◆ '+wal.c.toLocaleString('ca');$('shw').textContent=t;$('shc').textContent=t;renderLo()}
+function syncWal(){const t='◆ '+wal.c.toLocaleString(LANG);$('shw').textContent=t;$('shc').textContent=t;renderLo()}
 function renderLo(){
   const lo=$('lo');lo.innerHTML='';
   for(const p of PWS){if(!wal.inv[p.id])continue;
     const b=document.createElement('button');b.setAttribute('aria-pressed',wal.arm[p.id]?'true':'false');
-    b.textContent=p.ic+' '+p.n+' ('+wal.inv[p.id]+')';b.title=p.d;
+    b.textContent=p.ic+' '+nm(p)+' ('+wal.inv[p.id]+')';b.title=ds(p);
     b.addEventListener('pointerdown',e=>e.stopPropagation());
     b.addEventListener('click',e=>{e.stopPropagation();wal.arm[p.id]=!wal.arm[p.id];
       if(wal.arm[p.id]&&p.id!=='shield'){const o=p.id==='ghost'?'laser':'ghost';wal.arm[o]=false}   // fantasma i làser no es poden combinar
@@ -1233,13 +1351,13 @@ function renderShop(){
     for(const sh of SHIPS){
       const own=wal.own.includes(sh.id),eq=wal.ship===sh.id,cd=document.createElement('div');cd.className='card'+(eq?' eq':'');
       const cv=document.createElement('canvas');cd.appendChild(cv);drawShip2D(cv,sh);
-      const nb=document.createElement('b');nb.textContent=sh.n;cd.appendChild(nb);
-      const sm=document.createElement('small');sm.textContent=sh.d;cd.appendChild(sm);
+      const nb=document.createElement('b');nb.textContent=nm(sh);cd.appendChild(nb);
+      const sm=document.createElement('small');sm.textContent=ds(sh);cd.appendChild(sm);
       const bt=document.createElement('button');
-      if(eq){bt.textContent='Equipada';bt.disabled=true}
-      else if(own){bt.textContent='Equipa';bt.onclick=()=>{wal.ship=sh.id;saveWal();Mu.sfx('select');renderShop()}}
-      else{bt.className='buy';bt.textContent='◆ '+sh.pr.toLocaleString('ca');bt.disabled=wal.c<sh.pr;bt.setAttribute('aria-label','Compra '+sh.n+' per '+sh.pr+' monedes');
-        bt.onclick=()=>{if(wal.c<sh.pr)return;wal.c-=sh.pr;wal.own.push(sh.id);wal.ship=sh.id;saveWal();syncWal();Mu.sfx('start');vib(20);toast(sh.n+' desbloquejada');renderShop()}}
+      if(eq){bt.textContent=t('equipped');bt.disabled=true}
+      else if(own){bt.textContent=t('equip');bt.onclick=()=>{wal.ship=sh.id;saveWal();Mu.sfx('select');renderShop()}}
+      else{bt.className='buy';bt.textContent='◆ '+sh.pr.toLocaleString(LANG);bt.disabled=wal.c<sh.pr;bt.setAttribute('aria-label',t('buy',nm(sh),sh.pr));
+        bt.onclick=()=>{if(wal.c<sh.pr)return;wal.c-=sh.pr;wal.own.push(sh.id);wal.ship=sh.id;saveWal();syncWal();Mu.sfx('start');vib(20);toast(t('unlocked',nm(sh)));renderShop()}}
       cd.appendChild(bt);gd.appendChild(cd);
     }
     l.appendChild(gd);
@@ -1249,11 +1367,11 @@ function renderShop(){
       const cd=document.createElement('div');cd.className='card';
       const ic=document.createElement('span');ic.className='ic';ic.textContent=p.ic;ic.style.background=p.c+'33';ic.style.color=p.c;cd.appendChild(ic);
       const tx=document.createElement('div');tx.className='tx';
-      const nb=document.createElement('b');nb.textContent=p.n+(wal.inv[p.id]?' · tens '+wal.inv[p.id]:'');tx.appendChild(nb);
-      const sm=document.createElement('small');sm.textContent=p.d;tx.appendChild(sm);cd.appendChild(tx);
-      const bt=document.createElement('button');bt.className='buy';bt.textContent='◆ '+p.pr;bt.disabled=wal.c<p.pr;bt.setAttribute('aria-label','Compra '+p.n+' per '+p.pr+' monedes');
+      const nb=document.createElement('b');nb.textContent=nm(p)+(wal.inv[p.id]?' · '+t('have',wal.inv[p.id]):'');tx.appendChild(nb);
+      const sm=document.createElement('small');sm.textContent=ds(p);tx.appendChild(sm);cd.appendChild(tx);
+      const bt=document.createElement('button');bt.className='buy';bt.textContent='◆ '+p.pr;bt.disabled=wal.c<p.pr;bt.setAttribute('aria-label',t('buy',nm(p),p.pr));
       bt.onclick=()=>{if(wal.c<p.pr)return;wal.c-=p.pr;wal.inv[p.id]++;wal.arm[p.id]=true;if(p.id!=='shield'){const o=p.id==='ghost'?'laser':'ghost';wal.arm[o]=false}
-        saveWal();syncWal();Mu.sfx('select');vib(12);toast('Preparat: '+p.n);renderShop()};
+        saveWal();syncWal();Mu.sfx('select');vib(12);toast(t('armed',nm(p)));renderShop()};
       cd.appendChild(bt);ls.appendChild(cd);
     }
     l.appendChild(ls);
@@ -1276,7 +1394,7 @@ function grab(p){
   p.got=true;
   pw=p.t==='ghost'?{t:'ghost',end:dist+500,tot:500,lab:''}:{t:'laser',left:20,tot:20,lab:''};
   Mu.sfx('pickup');vib([14,24,14]);shake(3,.25);
-  toast(p.t==='ghost'?'Fantasma · 500 m sense xocs':'Làser · 20 s');
+  toast(t(p.t==='ghost'?'ghostgot':'lasergot'));
   $('pw').style.display='flex';
 }
 function endPw(){
@@ -1318,7 +1436,7 @@ function updatePw(dt){
     }else{lz.alert=false;lz.on=true}
   }else lz=null;
   const fr=pw.t==='ghost'?clamp((pw.end-dist)/pw.tot,0,1):clamp(pw.left/pw.tot,0,1);
-  const lab=pw.t==='ghost'?(dist>=pw.end?'Fantasma · aterrant':'Fantasma'):'Làser';
+  const lab=t(pw.t==='ghost'?(dist>=pw.end?'landing':'ghost'):'laser');
   if(lab!==pw.lab){pw.lab=lab;$('pwl').textContent=lab}
   $('pwb').style.transform='scaleX('+fr.toFixed(3)+')';
 }
@@ -1339,9 +1457,9 @@ function update(dt){
   }else speed=D0.v;
   const dz=speed*dt;scroll+=dz;if(st==='play')dist+=dz;nextZ-=dz;lastRowZ-=dz;
   if(st==='play'){
-    while(tunQ.length&&dist>=tunQ[0]){tunQ.shift();stage++;toast(capped()?'Túnel':'Túnel · velocitat +1');shake(5,.35);vib([12,30,12])}
-    const mu=multAt(dist);if(mu!==curMult){curMult=mu;toast('Monedes ×'+mu);Mu.sfx('level')}
-    const Lc=level();if(Lc!==lastLevel){lastLevel=Lc;toast(Lc>0?'Nivell '+(Lc+1)+(capped()?' · velocitat màxima':' · velocitat +5%'):'Nivell '+(Lc+1));Mu.level(Lc);shake(3,.25);vib(14)}
+    while(tunQ.length&&dist>=tunQ[0]){tunQ.shift();stage++;toast(t(capped()?'tunnel':'tunnelup'));shake(5,.35);vib([12,30,12])}
+    const mu=multAt(dist);if(mu!==curMult){curMult=mu;toast(t('coinsx',mu));Mu.sfx('level')}
+    const Lc=level();if(Lc!==lastLevel){lastLevel=Lc;toast(t('level',Lc+1)+(Lc>0?t(capped()?'maxspeed':'plus5'):''));Mu.level(Lc);shake(3,.25);vib(14)}
   }
   for(const o of obs){o.z-=dz;if(o.mv)o.x=o.bx+offOf(o,o.z)}
   for(const r of rows){r.z-=dz;if(r.m||r.A)r.c=r.c0+offOf(r,r.z)}
@@ -1557,9 +1675,9 @@ function drawScene(){
   gr=g.createRadialGradient(W/2,H*.5,Math.min(W,H)*.32,W/2,H*.5,Math.hypot(W,H)*.62);
   gr.addColorStop(0,'rgba(4,5,14,0)');gr.addColorStop(1,'rgba(4,5,14,'+(.32+(cfg.fx?.28*clamp((speed-30)/110,0,1):0)).toFixed(2)+')');
   g.fillStyle=gr;g.fillRect(-90,-90,W+180,H+180);
-  $('sc').textContent=Math.floor(dist).toLocaleString('ca')+' m';
-  $('cnv').textContent='◆ '+runC.toLocaleString('ca');$('cnm').textContent=curMult>1?'×'+curMult:'';$('cns').textContent=shield?'◈ escut':'';
-  $('lv').textContent=st==='play'||st==='dead'?'Nivell '+(L+1)+(L>0?(capped()?' · MAX':' · +'+Math.round((Math.pow(1.05,L)-1)*100)+'%'):'')+(best?' · Rècord '+best.toLocaleString('ca'):''):'';
+  $('sc').textContent=Math.floor(dist).toLocaleString(LANG)+' m';
+  $('cnv').textContent='◆ '+runC.toLocaleString(LANG);$('cnm').textContent=curMult>1?'×'+curMult:'';$('cns').textContent=shield?t('shieldhud'):'';
+  $('lv').textContent=st==='play'||st==='dead'?t('level',L+1)+(L>0?(capped()?' · MAX':' · +'+Math.round((Math.pow(1.05,L)-1)*100)+'%'):'')+(best?' · '+t('bestshort',best.toLocaleString(LANG)):''):'';
 }
 
 function drawPick(p,now){if(p.v)drawCoin(p,now);else drawPup(p,now)}
@@ -1632,6 +1750,20 @@ function loop(t){
   draw();
   requestAnimationFrame(loop);
 }
+// Aplica l'idioma als textos fixos de l'HTML (data-i18n) i als que es generen des del codi
+function applyLang(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('[data-i18n]').forEach(e=>{e.innerHTML=t(e.dataset.i18n)});
+  document.querySelectorAll('[data-i18n-aria]').forEach(e=>{const v=t(e.dataset.i18nAria);e.setAttribute('aria-label',v);if(e.title)e.title=v});
+  document.querySelectorAll('#lng button').forEach(b=>b.setAttribute('aria-checked',b.dataset.l===LANG?'true':'false'));
+  renderOv();muteUI();syncSet();syncWal();tutText();
+}
+document.querySelectorAll('#lng button').forEach(b=>b.addEventListener('click',()=>{
+  LANG=b.dataset.l;T=STR[LANG];
+  try{localStorage.setItem('sv-lang',LANG)}catch(e){}
+  applyLang();
+}));
+applyLang();
 reset();requestAnimationFrame(loop);
 })();
 </script>
